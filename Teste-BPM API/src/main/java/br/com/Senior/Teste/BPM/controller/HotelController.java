@@ -2,7 +2,6 @@ package br.com.Senior.Teste.BPM.controller;
 
 import br.com.Senior.Teste.BPM.dto.CheckInDTO;
 import br.com.Senior.Teste.BPM.dto.CheckInRequestDTO;
-import br.com.Senior.Teste.BPM.dto.CheckOutRequestDTO;
 import br.com.Senior.Teste.BPM.dto.ConsultaHospedesDTO;
 import br.com.Senior.Teste.BPM.dto.PessoaDTO;
 import br.com.Senior.Teste.BPM.mapper.EntityMapper;
@@ -82,28 +81,16 @@ public class HotelController {
         }
     }
     
-    // Check-in e Check-out
+    // Check-in
     @PostMapping("/check-in")
     public ResponseEntity<CheckInDTO> realizarCheckIn(@RequestBody CheckInRequestDTO request) {
         try {
             var checkIn = hotelService.realizarCheckIn(
                 request.getPessoaId(), 
-                request.getDataEntrada(), 
+                request.getDataEntrada(),
+                request.getDataSaidaPrevista(),
                 request.getAdicionalVeiculo()
             );
-            var checkInDTO = EntityMapper.toCheckInDTO(checkIn);
-            return ResponseEntity.ok(checkInDTO);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-    
-    @PutMapping("/check-out/{checkInId}")
-    public ResponseEntity<CheckInDTO> realizarCheckOut(
-            @PathVariable Long checkInId,
-            @RequestBody CheckOutRequestDTO request) {
-        try {
-            var checkIn = hotelService.realizarCheckOut(checkInId, request.getDataSaida());
             var checkInDTO = EntityMapper.toCheckInDTO(checkIn);
             return ResponseEntity.ok(checkInDTO);
         } catch (RuntimeException e) {
@@ -123,10 +110,10 @@ public class HotelController {
         }
     }
     
-    @GetMapping("/check-ins/ativos")
+    @GetMapping("/hospedes/ativos")
     public ResponseEntity<List<ConsultaHospedesDTO>> buscarHospedesAtivos() {
         try {
-            var checkIns = hotelService.buscarCheckInsAtivos();
+            var checkIns = hotelService.buscarHospedesAtivos();
             var consultaDTO = EntityMapper.toConsultaHospedesDTOList(checkIns);
             return ResponseEntity.ok(consultaDTO);
         } catch (RuntimeException e) {
@@ -134,10 +121,10 @@ public class HotelController {
         }
     }
     
-    @GetMapping("/check-ins/finalizados")
+    @GetMapping("/hospedes/finalizados")
     public ResponseEntity<List<ConsultaHospedesDTO>> buscarHospedesFinalizados() {
         try {
-            var checkIns = hotelService.buscarCheckInsFinalizados();
+            var checkIns = hotelService.buscarHospedesFinalizados();
             var consultaDTO = EntityMapper.toConsultaHospedesDTOList(checkIns);
             return ResponseEntity.ok(consultaDTO);
         } catch (RuntimeException e) {
@@ -145,10 +132,10 @@ public class HotelController {
         }
     }
     
-    @GetMapping("/pessoas/{pessoaId}/check-ins/ativos")
-    public ResponseEntity<List<ConsultaHospedesDTO>> buscarCheckInsAtivosPorPessoa(@PathVariable Long pessoaId) {
+    @GetMapping("/pessoas/{pessoaId}/hospedes/ativos")
+    public ResponseEntity<List<ConsultaHospedesDTO>> buscarHospedesAtivosPorPessoa(@PathVariable Long pessoaId) {
         try {
-            var checkIns = hotelService.buscarCheckInsAtivosPorPessoa(pessoaId);
+            var checkIns = hotelService.buscarHospedesAtivosPorPessoa(pessoaId);
             var consultaDTO = EntityMapper.toConsultaHospedesDTOList(checkIns);
             return ResponseEntity.ok(consultaDTO);
         } catch (RuntimeException e) {
@@ -156,10 +143,10 @@ public class HotelController {
         }
     }
     
-    @GetMapping("/pessoas/{pessoaId}/check-ins/finalizados")
-    public ResponseEntity<List<ConsultaHospedesDTO>> buscarCheckInsFinalizadosPorPessoa(@PathVariable Long pessoaId) {
+    @GetMapping("/pessoas/{pessoaId}/hospedes/finalizados")
+    public ResponseEntity<List<ConsultaHospedesDTO>> buscarHospedesFinalizadosPorPessoa(@PathVariable Long pessoaId) {
         try {
-            var checkIns = hotelService.buscarCheckInsFinalizadosPorPessoa(pessoaId);
+            var checkIns = hotelService.buscarHospedesFinalizadosPorPessoa(pessoaId);
             var consultaDTO = EntityMapper.toConsultaHospedesDTOList(checkIns);
             return ResponseEntity.ok(consultaDTO);
         } catch (RuntimeException e) {

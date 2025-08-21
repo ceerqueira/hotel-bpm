@@ -15,9 +15,9 @@ public class ConsultaHospedesDTO {
     private Long id;
     private PessoaDTO pessoa;
     private LocalDateTime dataEntrada;
-    private LocalDateTime dataSaida;
+    private LocalDateTime dataSaidaPrevista;
     private Boolean adicionalVeiculo;
     private BigDecimal valorTotal;
-    private String status; // "ATIVO" ou "CHECKOUT"
+    private String status; // "ATIVO" ou "FINALIZADO"
     private Long numeroDias;
 }

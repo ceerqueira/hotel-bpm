@@ -15,7 +15,7 @@ public class CheckInDTO {
     private Long id;
     private PessoaDTO pessoa;
     private LocalDateTime dataEntrada;
-    private LocalDateTime dataSaida;
+    private LocalDateTime dataSaidaPrevista;
     private Boolean adicionalVeiculo;
     private BigDecimal valorTotal;
 }

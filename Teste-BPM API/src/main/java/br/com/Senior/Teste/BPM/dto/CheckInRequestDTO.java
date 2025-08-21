@@ -13,5 +13,6 @@ public class CheckInRequestDTO {
     
     private Long pessoaId;
     private LocalDateTime dataEntrada;
+    private LocalDateTime dataSaidaPrevista;
     private Boolean adicionalVeiculo;
 }

@@ -7,6 +7,7 @@ import br.com.Senior.Teste.BPM.entity.CheckIn;
 import br.com.Senior.Teste.BPM.entity.Pessoa;
 import lombok.experimental.UtilityClass;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,7 +52,7 @@ public class EntityMapper {
             checkIn.getId(),
             toPessoaDTO(checkIn.getPessoa()),
             checkIn.getDataEntrada(),
-            checkIn.getDataSaida(),
+            checkIn.getDataSaidaPrevista(),
             checkIn.getAdicionalVeiculo(),
             checkIn.getValorTotal()
         );
@@ -67,7 +68,7 @@ public class EntityMapper {
         checkIn.setId(dto.getId());
         checkIn.setPessoa(toPessoaEntity(dto.getPessoa()));
         checkIn.setDataEntrada(dto.getDataEntrada());
-        checkIn.setDataSaida(dto.getDataSaida());
+        checkIn.setDataSaidaPrevista(dto.getDataSaidaPrevista());
         checkIn.setAdicionalVeiculo(dto.getAdicionalVeiculo());
         checkIn.setValorTotal(dto.getValorTotal());
         
@@ -80,18 +81,18 @@ public class EntityMapper {
             return null;
         }
         
-        String status = checkIn.getDataSaida() != null ? "CHECKOUT" : "ATIVO";
-        Long numeroDias = checkIn.getDataSaida() != null ? 
-            java.time.temporal.ChronoUnit.DAYS.between(
-                checkIn.getDataEntrada().toLocalDate(), 
-                checkIn.getDataSaida().toLocalDate()
-            ) : 0L;
+        LocalDateTime horaAtual = LocalDateTime.now();
+        String status = horaAtual.isAfter(checkIn.getDataSaidaPrevista()) ? "FINALIZADO" : "ATIVO";
+        Long numeroDias = java.time.temporal.ChronoUnit.DAYS.between(
+            checkIn.getDataEntrada().toLocalDate(), 
+            checkIn.getDataSaidaPrevista().toLocalDate()
+        );
         
         return new ConsultaHospedesDTO(
             checkIn.getId(),
             toPessoaDTO(checkIn.getPessoa()),
             checkIn.getDataEntrada(),
-            checkIn.getDataSaida(),
+            checkIn.getDataSaidaPrevista(),
             checkIn.getAdicionalVeiculo(),
             checkIn.getValorTotal(),
             status,

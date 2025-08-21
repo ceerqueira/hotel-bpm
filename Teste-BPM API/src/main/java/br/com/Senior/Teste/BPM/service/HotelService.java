@@ -48,35 +48,27 @@ public class HotelService {
         return pessoaRepository.findByNomeContainingIgnoreCase(termoBusca);
     }
     
-    public CheckIn realizarCheckIn(Long pessoaId, LocalDateTime dataEntrada, Boolean adicionalVeiculo) {
+    public CheckIn realizarCheckIn(Long pessoaId, LocalDateTime dataEntrada, LocalDateTime dataSaidaPrevista, Boolean adicionalVeiculo) {
         Optional<Pessoa> pessoaOpt = pessoaRepository.findById(pessoaId);
         if (pessoaOpt.isEmpty()) {
             throw new RuntimeException("Pessoa não encontrada");
         }
         
+        if (dataEntrada.isAfter(dataSaidaPrevista)) {
+            throw new RuntimeException("Data de entrada não pode ser posterior à data de saída prevista");
+        }
+        
         CheckIn checkIn = new CheckIn();
         checkIn.setPessoa(pessoaOpt.get());
         checkIn.setDataEntrada(dataEntrada);
+        checkIn.setDataSaidaPrevista(dataSaidaPrevista);
         checkIn.setAdicionalVeiculo(adicionalVeiculo != null ? adicionalVeiculo : false);
-        checkIn.setValorTotal(null); // Valor será calculado no checkout
         
-        return checkInRepository.save(checkIn);
-    }
-    
-    public CheckIn realizarCheckOut(Long checkInId, LocalDateTime dataSaida) {
-        Optional<CheckIn> checkInOpt = checkInRepository.findById(checkInId);
-        if (checkInOpt.isEmpty()) {
-            throw new RuntimeException("Check-in não encontrado");
-        }
-        
-        CheckIn checkIn = checkInOpt.get();
-        checkIn.setDataSaida(dataSaida);
-        
-        // Calcula o valor total
+        // Calcula o valor total baseado no período
         BigDecimal valorTotal = pricingService.calcularValorTotal(
-            checkIn.getDataEntrada(), 
-            dataSaida, 
-            checkIn.getAdicionalVeiculo()
+            dataEntrada, 
+            dataSaidaPrevista, 
+            adicionalVeiculo != null ? adicionalVeiculo : false
         );
         checkIn.setValorTotal(valorTotal);
         
@@ -92,29 +84,33 @@ public class HotelService {
         return checkInRepository.findByPessoa(pessoaOpt.get());
     }
     
-    public List<CheckIn> buscarCheckInsAtivos() {
-        return checkInRepository.findByDataSaidaIsNull();
+    public List<CheckIn> buscarHospedesAtivos() {
+        LocalDateTime horaAtual = LocalDateTime.now();
+        return checkInRepository.findHospedesAtivos(horaAtual);
     }
     
-    public List<CheckIn> buscarCheckInsFinalizados() {
-        return checkInRepository.findByDataSaidaIsNotNull();
+    public List<CheckIn> buscarHospedesFinalizados() {
+        LocalDateTime horaAtual = LocalDateTime.now();
+        return checkInRepository.findHospedesFinalizados(horaAtual);
     }
     
-    public List<CheckIn> buscarCheckInsAtivosPorPessoa(Long pessoaId) {
+    public List<CheckIn> buscarHospedesAtivosPorPessoa(Long pessoaId) {
         Optional<Pessoa> pessoaOpt = pessoaRepository.findById(pessoaId);
         if (pessoaOpt.isEmpty()) {
             throw new RuntimeException("Pessoa não encontrada");
         }
         
-        return checkInRepository.findByPessoaAndDataSaidaIsNull(pessoaOpt.get());
+        LocalDateTime horaAtual = LocalDateTime.now();
+        return checkInRepository.findHospedesAtivosPorPessoa(pessoaOpt.get(), horaAtual);
     }
     
-    public List<CheckIn> buscarCheckInsFinalizadosPorPessoa(Long pessoaId) {
+    public List<CheckIn> buscarHospedesFinalizadosPorPessoa(Long pessoaId) {
         Optional<Pessoa> pessoaOpt = pessoaRepository.findById(pessoaId);
         if (pessoaOpt.isEmpty()) {
             throw new RuntimeException("Pessoa não encontrada");
         }
         
-        return checkInRepository.findByPessoaAndDataSaidaIsNotNull(pessoaOpt.get());
+        LocalDateTime horaAtual = LocalDateTime.now();
+        return checkInRepository.findHospedesFinalizadosPorPessoa(pessoaOpt.get(), horaAtual);
     }
 }

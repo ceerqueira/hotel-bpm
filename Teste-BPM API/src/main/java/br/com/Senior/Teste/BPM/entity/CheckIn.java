@@ -26,8 +26,8 @@ public class CheckIn {
     @Column(name = "data_entrada", nullable = false)
     private LocalDateTime dataEntrada;
     
-    @Column(name = "data_saida")
-    private LocalDateTime dataSaida;
+    @Column(name = "data_saida_prevista", nullable = false)
+    private LocalDateTime dataSaidaPrevista;
     
     @Column(name = "adicional_veiculo", nullable = false)
     private Boolean adicionalVeiculo = false;
