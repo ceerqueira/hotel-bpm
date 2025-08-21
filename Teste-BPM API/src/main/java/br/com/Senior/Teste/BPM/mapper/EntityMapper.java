@@ -5,13 +5,13 @@ import br.com.Senior.Teste.BPM.dto.ConsultaHospedesDTO;
 import br.com.Senior.Teste.BPM.dto.PessoaDTO;
 import br.com.Senior.Teste.BPM.entity.CheckIn;
 import br.com.Senior.Teste.BPM.entity.Pessoa;
-import lombok.experimental.UtilityClass;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@UtilityClass
+@Component
 public class EntityMapper {
     
     // Conversão Pessoa Entity para DTO

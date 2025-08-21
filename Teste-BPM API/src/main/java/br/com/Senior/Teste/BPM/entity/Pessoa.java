@@ -2,12 +2,14 @@ package br.com.Senior.Teste.BPM.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "pessoa")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Pessoa {

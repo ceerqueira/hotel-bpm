@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CheckInRepository extends JpaRepository<CheckIn, Long> {
@@ -32,4 +33,8 @@ public interface CheckInRepository extends JpaRepository<CheckIn, Long> {
     // Busca hóspedes finalizados por pessoa
     @Query("SELECT c FROM CheckIn c WHERE c.pessoa = :pessoa AND c.dataSaidaPrevista <= :horaAtual")
     List<CheckIn> findHospedesFinalizadosPorPessoa(@Param("pessoa") Pessoa pessoa, @Param("horaAtual") LocalDateTime horaAtual);
+    
+    // Busca check-in ativo por pessoa (para verificar se já tem check-in ativo)
+    @Query("SELECT c FROM CheckIn c WHERE c.pessoa = :pessoa AND c.dataEntrada <= :horaAtual AND c.dataSaidaPrevista > :horaAtual")
+    Optional<CheckIn> findCheckInAtivoPorPessoa(@Param("pessoa") Pessoa pessoa, @Param("horaAtual") LocalDateTime horaAtual);
 }

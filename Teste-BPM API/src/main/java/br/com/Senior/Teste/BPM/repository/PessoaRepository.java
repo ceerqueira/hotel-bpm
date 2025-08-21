@@ -22,4 +22,7 @@ public interface PessoaRepository extends JpaRepository<Pessoa, Long> {
     List<Pessoa> findByNomeContainingIgnoreCase(String nome);
     
     List<Pessoa> findByDocumentoContaining(String documento);
+    
+    // Busca pessoa por ID e nome (para validações específicas)
+    Optional<Pessoa> findByIdAndNome(Long id, String nome);
 }

@@ -2,6 +2,7 @@ package br.com.Senior.Teste.BPM.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "check_in")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class CheckIn {
