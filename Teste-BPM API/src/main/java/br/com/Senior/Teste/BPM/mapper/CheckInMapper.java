@@ -2,9 +2,8 @@ package br.com.Senior.Teste.BPM.mapper;
 
 import br.com.Senior.Teste.BPM.dto.CheckInDTO;
 import br.com.Senior.Teste.BPM.dto.ConsultaHospedesDTO;
-import br.com.Senior.Teste.BPM.dto.PessoaDTO;
 import br.com.Senior.Teste.BPM.entity.CheckIn;
-import br.com.Senior.Teste.BPM.entity.Pessoa;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -12,61 +11,34 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class EntityMapper {
+@RequiredArgsConstructor
+public class CheckInMapper {
     
-    // Conversão Pessoa Entity para DTO
-    public static PessoaDTO toPessoaDTO(Pessoa pessoa) {
-        if (pessoa == null) {
-            return null;
-        }
-        
-        return new PessoaDTO(
-            pessoa.getId(),
-            pessoa.getNome(),
-            pessoa.getDocumento(),
-            pessoa.getTelefone()
-        );
-    }
-    
-    // Conversão Pessoa DTO para Entity
-    public static Pessoa toPessoaEntity(PessoaDTO dto) {
-        if (dto == null) {
-            return null;
-        }
-        
-        return new Pessoa(
-            dto.getId(),
-            dto.getNome(),
-            dto.getDocumento(),
-            dto.getTelefone()
-        );
-    }
-    
-    // Conversão CheckIn Entity para DTO
-    public static CheckInDTO toCheckInDTO(CheckIn checkIn) {
+    private final PessoaMapper pessoaMapper;
+
+    public CheckInDTO converterDTO(CheckIn checkIn) {
         if (checkIn == null) {
             return null;
         }
         
         return new CheckInDTO(
             checkIn.getId(),
-            toPessoaDTO(checkIn.getPessoa()),
+            pessoaMapper.converterDTO(checkIn.getPessoa()),
             checkIn.getDataEntrada(),
             checkIn.getDataSaidaPrevista(),
             checkIn.getAdicionalVeiculo(),
             checkIn.getValorTotal()
         );
     }
-    
-    // Conversão CheckIn DTO para Entity
-    public static CheckIn toCheckInEntity(CheckInDTO dto) {
+
+    public CheckIn converterEntity(CheckInDTO dto) {
         if (dto == null) {
             return null;
         }
         
         CheckIn checkIn = new CheckIn();
         checkIn.setId(dto.getId());
-        checkIn.setPessoa(toPessoaEntity(dto.getPessoa()));
+        checkIn.setPessoa(pessoaMapper.converterEntity(dto.getPessoa()));
         checkIn.setDataEntrada(dto.getDataEntrada());
         checkIn.setDataSaidaPrevista(dto.getDataSaidaPrevista());
         checkIn.setAdicionalVeiculo(dto.getAdicionalVeiculo());
@@ -74,9 +46,8 @@ public class EntityMapper {
         
         return checkIn;
     }
-    
-    // Conversão para ConsultaHospedesDTO
-    public static ConsultaHospedesDTO toConsultaHospedesDTO(CheckIn checkIn) {
+
+    public ConsultaHospedesDTO converterConsultaHospedesDTO(CheckIn checkIn) {
         if (checkIn == null) {
             return null;
         }
@@ -90,7 +61,7 @@ public class EntityMapper {
         
         return new ConsultaHospedesDTO(
             checkIn.getId(),
-            toPessoaDTO(checkIn.getPessoa()),
+            pessoaMapper.converterDTO(checkIn.getPessoa()),
             checkIn.getDataEntrada(),
             checkIn.getDataSaidaPrevista(),
             checkIn.getAdicionalVeiculo(),
@@ -99,35 +70,24 @@ public class EntityMapper {
             numeroDias
         );
     }
-    
-    // Conversão de listas
-    public static List<PessoaDTO> toPessoaDTOList(List<Pessoa> pessoas) {
-        if (pessoas == null) {
-            return null;
-        }
-        
-        return pessoas.stream()
-                .map(EntityMapper::toPessoaDTO)
-                .collect(Collectors.toList());
-    }
-    
-    public static List<CheckInDTO> toCheckInDTOList(List<CheckIn> checkIns) {
+
+    public List<CheckInDTO> converterDTOList(List<CheckIn> checkIns) {
         if (checkIns == null) {
             return null;
         }
         
         return checkIns.stream()
-                .map(EntityMapper::toCheckInDTO)
+                .map(this::converterDTO)
                 .collect(Collectors.toList());
     }
-    
-    public static List<ConsultaHospedesDTO> toConsultaHospedesDTOList(List<CheckIn> checkIns) {
+
+    public List<ConsultaHospedesDTO> converterConsultaHospedesDTOList(List<CheckIn> checkIns) {
         if (checkIns == null) {
             return null;
         }
         
         return checkIns.stream()
-                .map(EntityMapper::toConsultaHospedesDTO)
+                .map(this::converterConsultaHospedesDTO)
                 .collect(Collectors.toList());
     }
 }

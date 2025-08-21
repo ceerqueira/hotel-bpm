@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "pessoa")
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Pessoa {

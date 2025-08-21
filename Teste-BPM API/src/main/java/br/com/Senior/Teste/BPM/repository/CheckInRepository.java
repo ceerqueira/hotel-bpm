@@ -10,11 +10,15 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Repository
 public interface CheckInRepository extends JpaRepository<CheckIn, Long> {
     
     List<CheckIn> findByPessoa(Pessoa pessoa);
+    
+    Page<CheckIn> findByPessoa(Pessoa pessoa, Pageable pageable);
     
     List<CheckIn> findByDataEntradaBetween(LocalDateTime inicio, LocalDateTime fim);
     
@@ -22,17 +26,33 @@ public interface CheckInRepository extends JpaRepository<CheckIn, Long> {
     @Query("SELECT c FROM CheckIn c WHERE c.dataEntrada <= :horaAtual AND c.dataSaidaPrevista > :horaAtual")
     List<CheckIn> findHospedesAtivos(@Param("horaAtual") LocalDateTime horaAtual);
     
+    // Busca hóspedes ativos baseado na hora atual (com paginação)
+    @Query("SELECT c FROM CheckIn c WHERE c.dataEntrada <= :horaAtual AND c.dataSaidaPrevista > :horaAtual")
+    Page<CheckIn> findHospedesAtivos(@Param("horaAtual") LocalDateTime horaAtual, Pageable pageable);
+    
     // Busca hóspedes que já saíram (data de saída prevista já passou)
     @Query("SELECT c FROM CheckIn c WHERE c.dataSaidaPrevista <= :horaAtual")
     List<CheckIn> findHospedesFinalizados(@Param("horaAtual") LocalDateTime horaAtual);
+    
+    // Busca hóspedes que já saíram (data de saída prevista já passou) (com paginação)
+    @Query("SELECT c FROM CheckIn c WHERE c.dataSaidaPrevista <= :horaAtual")
+    Page<CheckIn> findHospedesFinalizados(@Param("horaAtual") LocalDateTime horaAtual, Pageable pageable);
     
     // Busca hóspedes ativos por pessoa
     @Query("SELECT c FROM CheckIn c WHERE c.pessoa = :pessoa AND c.dataEntrada <= :horaAtual AND c.dataSaidaPrevista > :horaAtual")
     List<CheckIn> findHospedesAtivosPorPessoa(@Param("pessoa") Pessoa pessoa, @Param("horaAtual") LocalDateTime horaAtual);
     
+    // Busca hóspedes ativos por pessoa (com paginação)
+    @Query("SELECT c FROM CheckIn c WHERE c.pessoa = :pessoa AND c.dataEntrada <= :horaAtual AND c.dataSaidaPrevista > :horaAtual")
+    Page<CheckIn> findHospedesAtivosPorPessoa(@Param("pessoa") Pessoa pessoa, @Param("horaAtual") LocalDateTime horaAtual, Pageable pageable);
+    
     // Busca hóspedes finalizados por pessoa
     @Query("SELECT c FROM CheckIn c WHERE c.pessoa = :pessoa AND c.dataSaidaPrevista <= :horaAtual")
     List<CheckIn> findHospedesFinalizadosPorPessoa(@Param("pessoa") Pessoa pessoa, @Param("horaAtual") LocalDateTime horaAtual);
+    
+    // Busca hóspedes finalizados por pessoa (com paginação)
+    @Query("SELECT c FROM CheckIn c WHERE c.pessoa = :pessoa AND c.dataSaidaPrevista <= :horaAtual")
+    Page<CheckIn> findHospedesFinalizadosPorPessoa(@Param("pessoa") Pessoa pessoa, @Param("horaAtual") LocalDateTime horaAtual, Pageable pageable);
     
     // Busca check-in ativo por pessoa (para verificar se já tem check-in ativo)
     @Query("SELECT c FROM CheckIn c WHERE c.pessoa = :pessoa AND c.dataEntrada <= :horaAtual AND c.dataSaidaPrevista > :horaAtual")

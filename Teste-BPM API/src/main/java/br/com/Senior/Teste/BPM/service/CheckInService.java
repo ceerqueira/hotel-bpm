@@ -7,6 +7,8 @@ import br.com.Senior.Teste.BPM.exception.EntityNotFoundException;
 import br.com.Senior.Teste.BPM.repository.CheckInRepository;
 import br.com.Senior.Teste.BPM.repository.PessoaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -50,30 +52,30 @@ public class CheckInService {
         return checkInRepository.save(checkIn);
     }
     
-    public List<CheckIn> buscarCheckInsPorPessoa(Long pessoaId) throws EntityNotFoundException {
+    public Page<CheckIn> buscarCheckInsPorPessoa(Long pessoaId, Integer pagina, Integer tamanho) throws EntityNotFoundException {
         Pessoa pessoa = pessoaRepository.findById(pessoaId)
                 .orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada com ID: " + pessoaId));
-        return checkInRepository.findByPessoa(pessoa);
+        return checkInRepository.findByPessoa(pessoa, PageRequest.of(pagina, tamanho));
     }
     
-    public List<CheckIn> buscarHospedesAtivos() {
-        return checkInRepository.findHospedesAtivos(LocalDateTime.now());
+    public Page<CheckIn> buscarHospedesAtivos(Integer pagina, Integer tamanho) {
+        return checkInRepository.findHospedesAtivos(LocalDateTime.now(), PageRequest.of(pagina, tamanho));
     }
     
-    public List<CheckIn> buscarHospedesFinalizados() {
-        return checkInRepository.findHospedesFinalizados(LocalDateTime.now());
+    public Page<CheckIn> buscarHospedesFinalizados(Integer pagina, Integer tamanho) {
+        return checkInRepository.findHospedesFinalizados(LocalDateTime.now(), PageRequest.of(pagina, tamanho));
     }
     
-    public List<CheckIn> buscarHospedesAtivosPorPessoa(Long pessoaId) throws EntityNotFoundException {
+    public Page<CheckIn> buscarHospedesAtivosPorPessoa(Long pessoaId, Integer pagina, Integer tamanho) throws EntityNotFoundException {
         Pessoa pessoa = pessoaRepository.findById(pessoaId)
                 .orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada com ID: " + pessoaId));
-        return checkInRepository.findHospedesAtivosPorPessoa(pessoa, LocalDateTime.now());
+        return checkInRepository.findHospedesAtivosPorPessoa(pessoa, LocalDateTime.now(), PageRequest.of(pagina, tamanho));
     }
     
-    public List<CheckIn> buscarHospedesFinalizadosPorPessoa(Long pessoaId) throws EntityNotFoundException {
+    public Page<CheckIn> buscarHospedesFinalizadosPorPessoa(Long pessoaId, Integer pagina, Integer tamanho) throws EntityNotFoundException {
         Pessoa pessoa = pessoaRepository.findById(pessoaId)
                 .orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada com ID: " + pessoaId));
-        return checkInRepository.findHospedesFinalizadosPorPessoa(pessoa,  LocalDateTime.now());
+        return checkInRepository.findHospedesFinalizadosPorPessoa(pessoa, LocalDateTime.now(), PageRequest.of(pagina, tamanho));
     }
     
     public CheckIn buscarCheckInPorId(Long id) throws EntityNotFoundException {
@@ -108,8 +110,8 @@ public class CheckInService {
         checkInRepository.deleteById(id);
     }
     
-    public List<CheckIn> listarTodosCheckIns() {
-        return checkInRepository.findAll();
+    public Page<CheckIn> listarTodosCheckIns(Integer pagina, Integer tamanho) {
+        return checkInRepository.findAll(PageRequest.of(pagina, tamanho));
     }
     
     public CheckIn buscarCheckInAtivoPorPessoa(Long pessoaId) throws EntityNotFoundException, BusinessException {

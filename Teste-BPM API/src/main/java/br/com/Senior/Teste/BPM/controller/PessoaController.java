@@ -3,16 +3,17 @@ package br.com.Senior.Teste.BPM.controller;
 import br.com.Senior.Teste.BPM.dto.PessoaDTO;
 import br.com.Senior.Teste.BPM.exception.BusinessException;
 import br.com.Senior.Teste.BPM.exception.EntityNotFoundException;
-import br.com.Senior.Teste.BPM.mapper.EntityMapper;
+import br.com.Senior.Teste.BPM.mapper.PessoaMapper;
 import br.com.Senior.Teste.BPM.service.PessoaService;
+import org.springframework.data.domain.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -20,92 +21,58 @@ import java.util.List;
 @Slf4j
 @Validated
 @CrossOrigin(origins = "*")
-public class PessoaController {
+public class PessoaController implements IPessoaController {
     
     private final PessoaService pessoaService;
-    private final EntityMapper entityMapper;
+    private final PessoaMapper pessoaMapper;
 
     @PostMapping
-    public ResponseEntity<PessoaDTO> cadastrarPessoa(@Valid @RequestBody PessoaDTO pessoaDTO) {
+    public ResponseEntity<PessoaDTO> cadastrarPessoa(@Valid @RequestBody PessoaDTO pessoaDTO) throws BusinessException {
         log.info("Cadastrando nova pessoa...");
-        try {
-            var pessoa = entityMapper.toPessoaEntity(pessoaDTO);
-            var pessoaSalva = pessoaService.cadastrarPessoa(pessoa);
-            var pessoaSalvaDTO = entityMapper.toPessoaDTO(pessoaSalva);
-            log.info("Pessoa cadastrada com sucesso!");
-            return ResponseEntity.ok(pessoaSalvaDTO);
-        } catch (BusinessException e) {
-            log.warn("Erro de negócio ao cadastrar pessoa: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
-        } catch (RuntimeException e) {
-            log.error("Erro ao cadastrar pessoa: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
-        }
+        var pessoa = pessoaMapper.converterEntity(pessoaDTO);
+        var pessoaSalva = pessoaService.cadastrarPessoa(pessoa);
+        var pessoaSalvaDTO = pessoaMapper.converterDTO(pessoaSalva);
+        log.info("Pessoa cadastrada com sucesso!");
+        return new ResponseEntity<>(pessoaSalvaDTO, HttpStatus.OK);
     }
     
     @GetMapping
-    public ResponseEntity<List<PessoaDTO>> buscarPessoas(@RequestParam(required = false) String termo) {
-        log.info("Buscando pessoas com termo: {}", termo);
-        try {
-            var pessoas = pessoaService.buscarPessoas(termo);
-            var pessoasDTO = entityMapper.toPessoaDTOList(pessoas);
-            log.info("Busca de pessoas realizada com sucesso!");
-            return ResponseEntity.ok(pessoasDTO);
-        } catch (RuntimeException e) {
-            log.error("Erro ao buscar pessoas: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<Page<PessoaDTO>> buscarPessoas(
+            @RequestParam(required = false) String termo,
+            @RequestParam(defaultValue = "0") Integer pagina,
+            @RequestParam(defaultValue = "10") Integer tamanho) {
+        log.info("Buscando pessoas com termo: {}, página: {}, tamanho: {}", termo, pagina, tamanho);
+        var pessoas = pessoaService.buscarPessoas(termo, pagina, tamanho);
+        var pessoasDTO = pessoas.map(pessoaMapper::converterDTO);
+        log.info("Busca de pessoas realizada com sucesso!");
+        return new ResponseEntity<>(pessoasDTO, HttpStatus.OK);
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<PessoaDTO> buscarPessoaPorId(@PathVariable Long id) {
+    public ResponseEntity<PessoaDTO> buscarPessoaPorId(@PathVariable Long id) throws EntityNotFoundException {
         log.info("Buscando pessoa por ID: {}", id);
-        try {
-            var pessoa = pessoaService.buscarPessoaPorId(id);
-            var pessoaDTO = entityMapper.toPessoaDTO(pessoa);
-            log.info("Pessoa encontrada com sucesso!");
-            return ResponseEntity.ok(pessoaDTO);
-        } catch (EntityNotFoundException e) {
-            log.warn("Pessoa não encontrada com ID: {}", id);
-            return ResponseEntity.notFound().build();
-        } catch (RuntimeException e) {
-            log.error("Erro ao buscar pessoa por ID: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
-        }
+        var pessoa = pessoaService.buscarPessoaPorId(id);
+        var pessoaDTO = pessoaMapper.converterDTO(pessoa);
+        log.info("Pessoa encontrada com sucesso!");
+        return new ResponseEntity<>(pessoaDTO, HttpStatus.OK);
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<PessoaDTO> atualizarPessoa(@PathVariable Long id, @Valid @RequestBody PessoaDTO pessoaDTO) {
+    public ResponseEntity<PessoaDTO> atualizarPessoa(@PathVariable Long id, @Valid @RequestBody PessoaDTO pessoaDTO) throws EntityNotFoundException {
         log.info("Atualizando pessoa com ID: {}", id);
-        try {
-            pessoaDTO.setId(id);
-            var pessoa = entityMapper.toPessoaEntity(pessoaDTO);
-            var pessoaSalva = pessoaService.atualizarPessoa(id, pessoa);
-            var pessoaSalvaDTO = entityMapper.toPessoaDTO(pessoaSalva);
-            log.info("Pessoa atualizada com sucesso!");
-            return ResponseEntity.ok(pessoaSalvaDTO);
-        } catch (EntityNotFoundException e) {
-            log.warn("Pessoa não encontrada para atualização: {}", e.getMessage());
-            return ResponseEntity.notFound().build();
-        } catch (BusinessException e) {
-            log.warn("Erro de negócio ao atualizar pessoa: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
-        } catch (RuntimeException e) {
-            log.error("Erro ao atualizar pessoa: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
-        }
+        pessoaDTO.setId(id);
+        var pessoa = pessoaMapper.converterEntity(pessoaDTO);
+        var pessoaSalva = pessoaService.atualizarPessoa(id, pessoa);
+        var pessoaSalvaDTO = pessoaMapper.converterDTO(pessoaSalva);
+        log.info("Pessoa atualizada com sucesso!");
+        return new ResponseEntity<>(pessoaSalvaDTO, HttpStatus.OK);
     }
     
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarPessoa(@PathVariable Long id) {
+    public ResponseEntity<Void> deletarPessoa(@PathVariable Long id) throws EntityNotFoundException {
         log.info("Deletando pessoa com ID: {}", id);
-        try {
-            // Implementar lógica de deleção se necessário
-            log.info("Pessoa deletada com sucesso!");
-            return ResponseEntity.ok().build();
-        } catch (RuntimeException e) {
-            log.error("Erro ao deletar pessoa: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
-        }
+        pessoaService.deletarPessoa(id);
+        log.info("Pessoa deletada com sucesso!");
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

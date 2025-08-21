@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Repository
 public interface PessoaRepository extends JpaRepository<Pessoa, Long> {
@@ -18,6 +20,9 @@ public interface PessoaRepository extends JpaRepository<Pessoa, Long> {
     
     @Query("SELECT p FROM Pessoa p WHERE p.nome LIKE %:nome% OR p.documento LIKE %:documento%")
     List<Pessoa> findByNomeOrDocumentoContaining(@Param("nome") String nome, @Param("documento") String documento);
+    
+    @Query("SELECT p FROM Pessoa p WHERE p.nome LIKE %:nome% OR p.documento LIKE %:documento%")
+    Page<Pessoa> findByNomeOrDocumentoContaining(@Param("nome") String nome, @Param("documento") String documento, Pageable pageable);
     
     List<Pessoa> findByNomeContainingIgnoreCase(String nome);
     

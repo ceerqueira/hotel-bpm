@@ -5,6 +5,8 @@ import br.com.Senior.Teste.BPM.exception.BusinessException;
 import br.com.Senior.Teste.BPM.exception.EntityNotFoundException;
 import br.com.Senior.Teste.BPM.repository.PessoaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,11 +27,11 @@ public class PessoaService {
         return pessoaRepository.save(pessoa);
     }
     
-    public List<Pessoa> buscarPessoas(String termo) {
+    public Page<Pessoa> buscarPessoas(String termo, Integer pagina, Integer tamanho) {
         if (termo == null || termo.trim().isEmpty()) {
-            return pessoaRepository.findAll();
+            return pessoaRepository.findAll(PageRequest.of(pagina, tamanho));
         }
-        return pessoaRepository.findByNomeOrDocumentoContaining(termo, termo);
+        return pessoaRepository.findByNomeOrDocumentoContaining(termo, termo, PageRequest.of(pagina, tamanho));
     }
     
     public Pessoa buscarPessoaPorId(Long id) throws EntityNotFoundException {
