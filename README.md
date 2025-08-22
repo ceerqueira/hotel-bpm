@@ -32,7 +32,7 @@ docker-compose up --build
 
 ## 🛠️ Tecnologias
 
-- **Frontend:** Angular 13
+- **Frontend:** Angular 13.2.1
 - **Backend:** Spring Boot 3.5.4
 - **Banco:** MySQL 8.0
 - **Containerização:** Docker + Docker Compose
