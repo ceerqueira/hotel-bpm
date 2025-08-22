@@ -8,6 +8,13 @@ Sistema de gerenciamento de check-in para hotéis desenvolvido como teste técni
 - Docker
 - Docker Compose
 
+### Portas Requeridas
+- **3306:** Para o serviço de banco de dados (MySQL).
+- **8080:** Para o serviço de backend (API).
+- **80:** Para o serviço de frontend (Aplicação Web).
+
+
+
 ### Execução
 ```bash
 docker-compose up --build
