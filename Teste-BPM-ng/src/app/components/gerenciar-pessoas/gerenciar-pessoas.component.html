@@ -1,0 +1,168 @@
+<div class="gerenciar-container">
+  <div class="content-card">
+    <div class="card-header">
+      <h2>Gerenciar Pessoas</h2>
+    </div>
+    
+    <div class="card-content">
+      <div class="actions-bar">
+        <div class="search-section">
+          <div class="search-box">
+            <input 
+              type="text" 
+              placeholder="Buscar por nome ou documento..." 
+              [(ngModel)]="searchTerm" 
+              (keyup.enter)="onSearch()"
+              class="search-input"
+            >
+            <button class="btn-search" (click)="onSearch()">
+              <i class="fas fa-search"></i>
+            </button>
+            <button class="btn-clear" (click)="limparBusca()" *ngIf="searchTerm">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="actions-section">
+          <button class="btn-primary" (click)="adicionarPessoa()">
+            <i class="fas fa-plus"></i> Nova Pessoa
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="loading" class="loading">
+        <div class="spinner"></div>
+        <p>Carregando pessoas...</p>
+      </div>
+
+      <div *ngIf="!loading && pessoas.length === 0" class="empty-state">
+        <i class="fas fa-users"></i>
+        <p>Nenhuma pessoa encontrada.</p>
+        <button class="btn-primary" (click)="adicionarPessoa()">Adicionar primeira pessoa</button>
+      </div>
+
+      <div *ngIf="!loading && pessoas.length > 0" class="pessoas-list">
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Documento</th>
+                <th>Telefone</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let pessoa of pessoas" class="table-row">
+                <td>{{ pessoa.id }}</td>
+                <td>
+                  <div class="pessoa-info">
+                    <strong>{{ pessoa.nome }}</strong>
+                  </div>
+                </td>
+                <td>{{ pessoa.documento }}</td>
+                <td>{{ pessoa.telefone }}</td>
+                <td>
+                  <div class="actions">
+                    <button class="btn-edit" (click)="editarPessoa(pessoa)" title="Editar">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn-delete" (click)="deletarPessoa(pessoa.id!)" title="Deletar">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Paginação -->
+        <div *ngIf="totalPages > 1" class="pagination-container">
+          <nav class="pagination">
+            <button class="page-btn" [disabled]="currentPage === 0" (click)="onPageChange(currentPage - 1)">
+              <i class="fas fa-chevron-left"></i> Anterior
+            </button>
+            
+            <div class="page-numbers">
+              <button 
+                *ngFor="let page of [].constructor(totalPages); let i = index" 
+                class="page-btn" 
+                [class.active]="currentPage === i"
+                (click)="onPageChange(i)"
+              >
+                {{ i + 1 }}
+              </button>
+            </div>
+            
+            <button class="page-btn" [disabled]="currentPage === totalPages - 1" (click)="onPageChange(currentPage + 1)">
+              Próximo <i class="fas fa-chevron-right"></i>
+            </button>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Adição/Edição -->
+  <div class="modal" [class.show]="showEditForm || showAddForm" *ngIf="showEditForm || showAddForm">
+    <div class="modal-overlay" (click)="cancelarEdicao()"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>{{ showAddForm ? 'Adicionar Pessoa' : 'Editar Pessoa' }}</h3>
+        <button class="modal-close" (click)="cancelarEdicao()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="modal-body" *ngIf="editingPessoa">
+        <form class="edit-form">
+          <div class="form-group">
+            <label>Nome</label>
+            <input 
+              type="text" 
+              class="form-input"
+              [(ngModel)]="editingPessoa.nome" 
+              name="nome"
+              placeholder="Digite o nome completo"
+              required
+            >
+          </div>
+          
+          <div class="form-group">
+            <label>Documento (CPF)</label>
+            <input 
+              type="text" 
+              class="form-input"
+              [(ngModel)]="editingPessoa.documento" 
+              name="documento"
+              placeholder="000.000.000-00"
+              required
+            >
+          </div>
+          
+          <div class="form-group">
+            <label>Telefone</label>
+            <input 
+              type="text" 
+              class="form-input"
+              [(ngModel)]="editingPessoa.telefone" 
+              name="telefone"
+              placeholder="(00) 00000-0000"
+              required
+            >
+          </div>
+        </form>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="cancelarEdicao()">Cancelar</button>
+        <button class="btn-primary" (click)="salvarPessoa()">
+          {{ showAddForm ? 'Adicionar' : 'Salvar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,81 @@
+<div class="check-in-container">
+  <div class="form-card">
+    <div class="form-header">
+      <h2>Novo check in</h2>
+    </div>
+    
+    <form [formGroup]="checkInForm" (ngSubmit)="onSubmit()" class="check-in-form">
+      <div class="form-row">
+        <div class="form-field">
+          <label for="dataEntrada">Data/hora de entrada</label>
+          <input 
+            type="datetime-local" 
+            id="dataEntrada" 
+            formControlName="dataEntrada"
+            class="form-input"
+            [class.error]="checkInForm.get('dataEntrada')?.invalid && checkInForm.get('dataEntrada')?.touched"
+          >
+        </div>
+        
+        <div class="form-field">
+          <label for="dataSaidaPrevista">Data/hora de saída prevista</label>
+          <input 
+            type="datetime-local" 
+            id="dataSaidaPrevista" 
+            formControlName="dataSaidaPrevista"
+            class="form-input"
+            [class.error]="checkInForm.get('dataSaidaPrevista')?.invalid && checkInForm.get('dataSaidaPrevista')?.touched"
+          >
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-field">
+          <label for="pessoaId">Pessoa</label>
+          <select 
+            id="pessoaId" 
+            formControlName="pessoaId"
+            class="form-input"
+            [class.error]="checkInForm.get('pessoaId')?.invalid && checkInForm.get('pessoaId')?.touched"
+          >
+            <option value="">Selecione uma pessoa</option>
+            <option *ngFor="let pessoa of pessoas" [value]="pessoa.id">
+              {{ pessoa.nome }} - {{ pessoa.documento }}
+            </option>
+          </select>
+        </div>
+        
+        <div class="form-field checkbox-field">
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              formControlName="adicionalVeiculo"
+              class="checkbox-input"
+            >
+            <span class="checkbox-text">Possui veículo</span>
+          </label>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-field">
+          <button 
+            type="submit" 
+            class="btn-salvar"
+            [disabled]="checkInForm.invalid || loading"
+          >
+            {{ loading ? 'Salvando...' : 'Salvar' }}
+          </button>
+        </div>
+      </div>
+    </form>
+    
+    <div *ngIf="successMessage" class="success-message">
+      {{ successMessage }}
+    </div>
+    
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,284 @@
+<div class="gerenciar-container">
+  <div class="content-card">
+    <div class="card-header">
+      <h2>Gerenciar Check-ins</h2>
+    </div>
+
+    <div class="tabs">
+      <button
+        class="tab-button"
+        [class.active]="activeTab === 'todos'"
+        (click)="setActiveTab('todos')"
+      >
+        Todos os Check-ins ({{ checkIns.length }})
+      </button>
+      <button
+        class="tab-button"
+        [class.active]="activeTab === 'ativos'"
+        (click)="setActiveTab('ativos')"
+      >
+        Hóspedes Ativos ({{ checkInsAtivos.length }})
+      </button>
+      <button
+        class="tab-button"
+        [class.active]="activeTab === 'finalizados'"
+        (click)="setActiveTab('finalizados')"
+      >
+        Hóspedes Finalizados ({{ checkInsFinalizados.length }})
+      </button>
+    </div>
+
+          <div class="card-content">
+
+      <div *ngIf="loading" class="loading">
+        <div class="spinner"></div>
+        <p>Carregando check-ins...</p>
+      </div>
+
+      <!-- Tab Todos os Check-ins -->
+      <div *ngIf="activeTab === 'todos' && !loading">
+
+        <div *ngIf="checkIns.length === 0" class="empty-state">
+          <i class="fas fa-bed"></i>
+          <p>Nenhum check-in encontrado.</p>
+          <button class="btn-primary" routerLink="/check-in">Criar primeiro check-in</button>
+        </div>
+
+        <div *ngIf="checkIns.length > 0" class="check-ins-list">
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Hóspede</th>
+                  <th>Data Entrada</th>
+                  <th>Data Saída Prevista</th>
+                  <th>Veículo</th>
+                  <th>Valor Total</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let checkIn of checkIns" class="table-row">
+                  <td>{{ checkIn.id }}</td>
+                  <td>
+                    <div class="pessoa-info">
+                      <strong>{{ checkIn.pessoa.nome }}</strong>
+                      <small>{{ checkIn.pessoa.documento }}</small>
+                    </div>
+                  </td>
+                  <td>{{ formatarData(checkIn.dataEntrada) }}</td>
+                  <td>{{ formatarData(checkIn.dataSaidaPrevista) }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="checkIn.adicionalVeiculo ? 'badge-success' : 'badge-secondary'">
+                      {{ checkIn.adicionalVeiculo ? 'Sim' : 'Não' }}
+                    </span>
+                  </td>
+                  <td class="valor">{{ formatarValor(checkIn.valorTotal || 0) }}</td>
+                  <td>
+                    <div class="actions">
+                      <button class="btn-edit" (click)="editarCheckIn(checkIn)" title="Editar">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <button class="btn-delete" (click)="deletarCheckIn(checkIn.id!)" title="Deletar">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Paginação -->
+          <div *ngIf="totalPages > 1" class="pagination-container">
+            <nav class="pagination">
+              <button class="page-btn" [disabled]="currentPage === 0" (click)="onPageChange(currentPage - 1)">
+                <i class="fas fa-chevron-left"></i> Anterior
+              </button>
+
+              <div class="page-numbers">
+                <button
+                  *ngFor="let page of [].constructor(totalPages); let i = index"
+                  class="page-btn"
+                  [class.active]="currentPage === i"
+                  (click)="onPageChange(i)"
+                >
+                  {{ i + 1 }}
+                </button>
+              </div>
+
+              <button class="page-btn" [disabled]="currentPage === totalPages - 1" (click)="onPageChange(currentPage + 1)">
+                Próximo <i class="fas fa-chevron-right"></i>
+              </button>
+            </nav>
+          </div>
+        </div>
+      </div>
+
+              <!-- Tab Hóspedes Ativos -->
+        <div *ngIf="activeTab === 'ativos' && !loading" class="tab-pane">
+          <div *ngIf="checkInsAtivos.length === 0" class="empty-state">
+            <i class="fas fa-bed"></i>
+            <p>Nenhum hóspede ativo no momento.</p>
+          </div>
+
+          <div *ngIf="checkInsAtivos.length > 0" class="check-ins-list">
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Hóspede</th>
+                    <th>Data Entrada</th>
+                    <th>Data Saída Prevista</th>
+                    <th>Veículo</th>
+                    <th>Valor Total</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let checkIn of checkInsAtivos" class="table-row">
+                    <td>{{ checkIn.id }}</td>
+                    <td>
+                      <div class="pessoa-info">
+                        <strong>{{ checkIn.pessoa.nome }}</strong>
+                        <small>{{ checkIn.pessoa.documento || 'Não informado' }}</small>
+                      </div>
+                    </td>
+                    <td>{{ formatarData(checkIn.dataEntrada) }}</td>
+                    <td>{{ formatarData(checkIn.dataSaidaPrevista) }}</td>
+                    <td>
+                      <span class="badge" [ngClass]="checkIn.adicionalVeiculo ? 'badge-success' : 'badge-secondary'">
+                        {{ checkIn.adicionalVeiculo ? 'Sim' : 'Não' }}
+                      </span>
+                    </td>
+                    <td class="valor">{{ formatarValor(calcularValorTotal(checkIn)) }}</td>
+                    <td>
+                      <div class="actions">
+                        <button class="btn-edit" (click)="editarCheckInPorId(checkIn.id!)" title="Editar">
+                          <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-delete" (click)="deletarCheckIn(checkIn.id!)" title="Deletar">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+              <!-- Tab Hóspedes Finalizados -->
+        <div *ngIf="activeTab === 'finalizados' && !loading" class="tab-pane">
+          <div *ngIf="checkInsFinalizados.length === 0" class="empty-state">
+            <i class="fas fa-bed"></i>
+            <p>Nenhum hóspede finalizado encontrado.</p>
+          </div>
+
+          <div *ngIf="checkInsFinalizados.length > 0" class="check-ins-list">
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Hóspede</th>
+                    <th>Data Entrada</th>
+                    <th>Data Saída Prevista</th>
+                    <th>Veículo</th>
+                    <th>Valor Total</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let checkIn of checkInsFinalizados" class="table-row finalizado">
+                    <td>{{ checkIn.id }}</td>
+                    <td>
+                      <div class="pessoa-info">
+                        <strong>{{ checkIn.pessoa.nome }}</strong>
+                        <small>{{ checkIn.pessoa.documento || 'Não informado' }}</small>
+                      </div>
+                    </td>
+                    <td>{{ formatarData(checkIn.dataEntrada) }}</td>
+                    <td>{{ formatarData(checkIn.dataSaidaPrevista) }}</td>
+                    <td>
+                      <span class="badge" [ngClass]="checkIn.adicionalVeiculo ? 'badge-success' : 'badge-secondary'">
+                        {{ checkIn.adicionalVeiculo ? 'Sim' : 'Não' }}
+                      </span>
+                    </td>
+                    <td class="valor total">{{ formatarValor(calcularValorTotal(checkIn)) }}</td>
+                    <td>
+                      <div class="actions">
+                        <button class="btn-edit" (click)="editarCheckInPorId(checkIn.id!)" title="Editar">
+                          <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-delete" (click)="deletarCheckIn(checkIn.id!)" title="Deletar">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+
+  <!-- Modal de Edição -->
+  <div class="modal" [class.show]="showEditForm" *ngIf="showEditForm">
+    <div class="modal-overlay" (click)="cancelarEdicao()"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Editar Check-in</h3>
+        <button class="modal-close" (click)="cancelarEdicao()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body" *ngIf="editingCheckIn">
+        <form class="edit-form">
+          <div class="form-group">
+            <label>Data de Entrada</label>
+            <input
+              type="datetime-local"
+              class="form-input"
+              [(ngModel)]="editingCheckIn.dataEntrada"
+              name="dataEntrada"
+            >
+          </div>
+
+          <div class="form-group">
+            <label>Data de Saída Prevista</label>
+            <input
+              type="datetime-local"
+              class="form-input"
+              [(ngModel)]="editingCheckIn.dataSaidaPrevista"
+              name="dataSaidaPrevista"
+            >
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                [(ngModel)]="editingCheckIn.adicionalVeiculo"
+                name="adicionalVeiculo"
+                class="checkbox-input"
+              >
+              <span>Adicional de Veículo</span>
+            </label>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="cancelarEdicao()">Cancelar</button>
+        <button class="btn-primary" (click)="salvarEdicao()">Salvar</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,78 @@
+<div class="pessoa-container">
+  <div class="form-card">
+    <div class="form-header">
+      <h2>Cadastrar Pessoa</h2>
+    </div>
+    
+    <form [formGroup]="pessoaForm" (ngSubmit)="onSubmit()" class="pessoa-form">
+      <div class="form-row">
+        <div class="form-field">
+          <label for="nome">Nome</label>
+          <input 
+            type="text" 
+            id="nome" 
+            formControlName="nome"
+            class="form-input"
+            placeholder="Digite o nome completo"
+            [class.error]="pessoaForm.get('nome')?.invalid && pessoaForm.get('nome')?.touched"
+          >
+          <div *ngIf="pessoaForm.get('nome')?.invalid && pessoaForm.get('nome')?.touched" class="error-text">
+            Nome é obrigatório e deve ter pelo menos 2 caracteres
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-field">
+          <label for="documento">CPF</label>
+          <input 
+            type="text" 
+            id="documento" 
+            formControlName="documento"
+            class="form-input"
+            placeholder="Digite o CPF"
+            [class.error]="pessoaForm.get('documento')?.invalid && pessoaForm.get('documento')?.touched"
+          >
+          <div *ngIf="pessoaForm.get('documento')?.invalid && pessoaForm.get('documento')?.touched" class="error-text">
+            CPF é obrigatório e deve ter pelo menos 11 dígitos
+          </div>
+        </div>
+        
+        <div class="form-field">
+          <label for="telefone">Telefone</label>
+          <input 
+            type="text" 
+            id="telefone" 
+            formControlName="telefone"
+            class="form-input"
+            placeholder="Digite o telefone"
+            [class.error]="pessoaForm.get('telefone')?.invalid && pessoaForm.get('telefone')?.touched"
+          >
+          <div *ngIf="pessoaForm.get('telefone')?.invalid && pessoaForm.get('telefone')?.touched" class="error-text">
+            Telefone é obrigatório e deve ter pelo menos 10 dígitos
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-field">
+          <button 
+            type="submit" 
+            class="btn-salvar"
+            [disabled]="pessoaForm.invalid || loading"
+          >
+            {{ loading ? 'Salvando...' : 'Salvar' }}
+          </button>
+        </div>
+      </div>
+    </form>
+    
+    <div *ngIf="successMessage" class="success-message">
+      {{ successMessage }}
+    </div>
+    
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+  </div>
+</div>
