@@ -24,17 +24,9 @@ public class CheckInService {
     private final PricingService pricingService;
     
     public CheckIn realizarCheckIn(Long pessoaId, LocalDateTime dataEntrada, 
-                                  LocalDateTime dataSaidaPrevista, Boolean adicionalVeiculo) throws EntityNotFoundException, BusinessException {
+                                  LocalDateTime dataSaidaPrevista, Boolean adicionalVeiculo) throws EntityNotFoundException {
         Pessoa pessoa = pessoaRepository.findById(pessoaId)
                 .orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada com ID: " + pessoaId));
-
-        if (dataEntrada.isAfter(dataSaidaPrevista)) {
-            throw new BusinessException("Data de entrada não pode ser posterior à data de saída prevista");
-        }
-        
-        if (dataEntrada.isBefore(LocalDateTime.now())) {
-            throw new BusinessException("Data de entrada não pode ser anterior à data atual");
-        }
 
         checkInRepository.findCheckInAtivoPorPessoa(pessoa, LocalDateTime.now())
                 .ifPresent(checkInAtivo -> {
