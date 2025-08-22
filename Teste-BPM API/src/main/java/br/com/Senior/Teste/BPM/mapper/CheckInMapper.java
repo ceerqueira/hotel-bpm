@@ -91,3 +91,4 @@ public class CheckInMapper {
                 .collect(Collectors.toList());
     }
 }
+

@@ -108,3 +108,4 @@ public interface ICheckInController {
     @GetMapping("/pessoas/{pessoaId}/check-in/ativo")
     ResponseEntity<CheckInDTO> buscarCheckInAtivoPorPessoa(@PathVariable Long pessoaId) throws EntityNotFoundException, BusinessException;
 }
+

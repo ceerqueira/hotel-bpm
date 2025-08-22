@@ -76,3 +76,4 @@ public interface IPessoaController {
     @DeleteMapping("/{id}")
     ResponseEntity<Void> deletarPessoa(@PathVariable Long id) throws EntityNotFoundException;
 }
+
