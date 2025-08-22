@@ -1,9 +1,6 @@
 package br.com.Senior.Teste.BPM.controller;
 
 import br.com.Senior.Teste.BPM.controller.dto.CheckInDTO;
-import br.com.Senior.Teste.BPM.controller.dto.CheckInRequestDTO;
-import br.com.Senior.Teste.BPM.controller.dto.CheckInUpdateDTO;
-import br.com.Senior.Teste.BPM.controller.dto.ConsultaHospedesDTO;
 import br.com.Senior.Teste.BPM.entity.CheckIn;
 import br.com.Senior.Teste.BPM.exception.BusinessException;
 import br.com.Senior.Teste.BPM.exception.EntityNotFoundException;
@@ -31,10 +28,10 @@ public class CheckInController implements ICheckInController {
     private final CheckInMapper checkInMapper;
 
     @PostMapping
-    public ResponseEntity<CheckInDTO> realizarCheckIn(@Valid @RequestBody CheckInRequestDTO request) throws EntityNotFoundException, BusinessException {
-        log.info("Realizando check-in para pessoa ID: {}", request.getPessoaId());
+    public ResponseEntity<CheckInDTO> realizarCheckIn(@Valid @RequestBody CheckInDTO request) throws EntityNotFoundException, BusinessException {
+        log.info("Realizando check-in para pessoa ID: {}", request.getPessoa().getId());
         CheckIn checkIn = checkInService.realizarCheckIn(
-            request.getPessoaId(), 
+            request.getPessoa().getId(),
             request.getDataEntrada(),
             request.getDataSaidaPrevista(),
             request.getAdicionalVeiculo()
@@ -57,47 +54,47 @@ public class CheckInController implements ICheckInController {
     }
     
     @GetMapping("/hospedes/ativos")
-    public ResponseEntity<Page<ConsultaHospedesDTO>> buscarHospedesAtivos(
+    public ResponseEntity<Page<CheckInDTO>> buscarHospedesAtivos(
             @RequestParam(defaultValue = "0") Integer pagina,
             @RequestParam(defaultValue = "10") Integer tamanho) {
         log.info("Buscando hóspedes ativos, página: {}, tamanho: {}", pagina, tamanho);
         Page<CheckIn> checkIns = checkInService.buscarHospedesAtivos(pagina, tamanho);
-        Page<ConsultaHospedesDTO> consultaDTO = checkIns.map(checkInMapper::converterConsultaHospedesDTO);
+        Page<CheckInDTO> consultaDTO = checkIns.map(checkInMapper::converterDTO);
         log.info("Hóspedes ativos encontrados com sucesso!");
         return new ResponseEntity<>(consultaDTO, HttpStatus.OK);
     }
     
     @GetMapping("/hospedes/finalizados")
-    public ResponseEntity<Page<ConsultaHospedesDTO>> buscarHospedesFinalizados(
+    public ResponseEntity<Page<CheckInDTO>> buscarHospedesFinalizados(
             @RequestParam(defaultValue = "0") Integer pagina,
             @RequestParam(defaultValue = "10") Integer tamanho) {
         log.info("Buscando hóspedes finalizados, página: {}, tamanho: {}", pagina, tamanho);
         Page<CheckIn> checkIns = checkInService.buscarHospedesFinalizados(pagina, tamanho);
-        Page<ConsultaHospedesDTO> consultaDTO = checkIns.map(checkInMapper::converterConsultaHospedesDTO);
+        Page<CheckInDTO> consultaDTO = checkIns.map(checkInMapper::converterDTO);
         log.info("Hóspedes finalizados encontrados com sucesso!");
         return new ResponseEntity<>(consultaDTO, HttpStatus.OK);
     }
     
     @GetMapping("/pessoas/{pessoaId}/hospedes/ativos")
-    public ResponseEntity<Page<ConsultaHospedesDTO>> buscarHospedesAtivosPorPessoa(
+    public ResponseEntity<Page<CheckInDTO>> buscarHospedesAtivosPorPessoa(
             @PathVariable Long pessoaId,
             @RequestParam(defaultValue = "0") Integer pagina,
             @RequestParam(defaultValue = "10") Integer tamanho) throws EntityNotFoundException {
         log.info("Buscando hóspedes ativos da pessoa ID: {}, página: {}, tamanho: {}", pessoaId, pagina, tamanho);
         Page<CheckIn> checkIns = checkInService.buscarHospedesAtivosPorPessoa(pessoaId, pagina, tamanho);
-        Page<ConsultaHospedesDTO> consultaDTO = checkIns.map(checkInMapper::converterConsultaHospedesDTO);
+        Page<CheckInDTO> consultaDTO = checkIns.map(checkInMapper::converterDTO);
         log.info("Hóspedes ativos da pessoa encontrados com sucesso!");
         return new ResponseEntity<>(consultaDTO, HttpStatus.OK);
     }
     
     @GetMapping("/pessoas/{pessoaId}/hospedes/finalizados")
-    public ResponseEntity<Page<ConsultaHospedesDTO>> buscarHospedesFinalizadosPorPessoa(
+    public ResponseEntity<Page<CheckInDTO>> buscarHospedesFinalizadosPorPessoa(
             @PathVariable Long pessoaId,
             @RequestParam(defaultValue = "0") Integer pagina,
             @RequestParam(defaultValue = "10") Integer tamanho) throws EntityNotFoundException {
         log.info("Buscando hóspedes finalizados da pessoa ID: {}, página: {}, tamanho: {}", pessoaId, pagina, tamanho);
         Page<CheckIn> checkIns = checkInService.buscarHospedesFinalizadosPorPessoa(pessoaId, pagina, tamanho);
-        Page<ConsultaHospedesDTO> consultaDTO = checkIns.map(checkInMapper::converterConsultaHospedesDTO);
+        Page<CheckInDTO> consultaDTO = checkIns.map(checkInMapper::converterDTO);
         log.info("Hóspedes finalizados da pessoa encontrados com sucesso!");
         return new ResponseEntity<>(consultaDTO, HttpStatus.OK);
     }
@@ -121,7 +118,7 @@ public class CheckInController implements ICheckInController {
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<CheckInDTO> atualizarCheckIn(@PathVariable Long id, @Valid @RequestBody CheckInUpdateDTO checkInUpdateDTO) throws EntityNotFoundException {
+    public ResponseEntity<CheckInDTO> atualizarCheckIn(@PathVariable Long id, @Valid @RequestBody CheckInDTO checkInUpdateDTO) throws EntityNotFoundException {
         log.info("Atualizando check-in com ID: {}", id);
         CheckIn checkInAtualizado = CheckIn.builder()
                 .dataEntrada(checkInUpdateDTO.getDataEntrada())

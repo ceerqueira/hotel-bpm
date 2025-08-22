@@ -1,9 +1,6 @@
 package br.com.Senior.Teste.BPM.controller;
 
 import br.com.Senior.Teste.BPM.controller.dto.CheckInDTO;
-import br.com.Senior.Teste.BPM.controller.dto.CheckInRequestDTO;
-import br.com.Senior.Teste.BPM.controller.dto.CheckInUpdateDTO;
-import br.com.Senior.Teste.BPM.controller.dto.ConsultaHospedesDTO;
 import br.com.Senior.Teste.BPM.exception.BusinessException;
 import br.com.Senior.Teste.BPM.exception.EntityNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,7 +25,7 @@ public interface ICheckInController {
             }
     )
     @PostMapping
-    ResponseEntity<CheckInDTO> realizarCheckIn(@Valid @RequestBody CheckInRequestDTO request) throws EntityNotFoundException, BusinessException;
+    ResponseEntity<CheckInDTO> realizarCheckIn(@Valid @RequestBody CheckInDTO checkInDTO) throws EntityNotFoundException, BusinessException;
 
     @Operation(summary = "Lista check-ins de uma pessoa", description = "Lista check-ins de uma pessoa específica com paginação")
     @ApiResponses(
@@ -53,8 +50,8 @@ public interface ICheckInController {
             }
     )
     @GetMapping("/hospedes/ativos")
-    ResponseEntity<Page<ConsultaHospedesDTO>> buscarHospedesAtivos(@RequestParam(defaultValue = "0") Integer pagina,
-                                                                    @RequestParam(defaultValue = "10") Integer tamanho);
+    ResponseEntity<Page<CheckInDTO>> buscarHospedesAtivos(@RequestParam(defaultValue = "0") Integer pagina,
+                                                          @RequestParam(defaultValue = "10") Integer tamanho);
 
     @Operation(summary = "Lista hóspedes finalizados", description = "Lista todos os hóspedes finalizados com paginação")
     @ApiResponses(
@@ -65,8 +62,8 @@ public interface ICheckInController {
             }
     )
     @GetMapping("/hospedes/finalizados")
-    ResponseEntity<Page<ConsultaHospedesDTO>> buscarHospedesFinalizados(@RequestParam(defaultValue = "0") Integer pagina,
-                                                                         @RequestParam(defaultValue = "10") Integer tamanho);
+    ResponseEntity<Page<CheckInDTO>> buscarHospedesFinalizados(@RequestParam(defaultValue = "0") Integer pagina,
+                                                               @RequestParam(defaultValue = "10") Integer tamanho);
 
     @Operation(summary = "Lista hóspedes ativos de uma pessoa", description = "Lista hóspedes ativos de uma pessoa específica com paginação")
     @ApiResponses(
@@ -78,9 +75,9 @@ public interface ICheckInController {
             }
     )
     @GetMapping("/pessoas/{pessoaId}/hospedes/ativos")
-    ResponseEntity<Page<ConsultaHospedesDTO>> buscarHospedesAtivosPorPessoa(@PathVariable Long pessoaId,
-                                                                             @RequestParam(defaultValue = "0") Integer pagina,
-                                                                             @RequestParam(defaultValue = "10") Integer tamanho) throws EntityNotFoundException;
+    ResponseEntity<Page<CheckInDTO>> buscarHospedesAtivosPorPessoa(@PathVariable Long pessoaId,
+                                                                   @RequestParam(defaultValue = "0") Integer pagina,
+                                                                   @RequestParam(defaultValue = "10") Integer tamanho) throws EntityNotFoundException;
 
     @Operation(summary = "Lista hóspedes finalizados de uma pessoa", description = "Lista hóspedes finalizados de uma pessoa específica com paginação")
     @ApiResponses(
@@ -92,9 +89,9 @@ public interface ICheckInController {
             }
     )
     @GetMapping("/pessoas/{pessoaId}/hospedes/finalizados")
-    ResponseEntity<Page<ConsultaHospedesDTO>> buscarHospedesFinalizadosPorPessoa(@PathVariable Long pessoaId,
-                                                                                  @RequestParam(defaultValue = "0") Integer pagina,
-                                                                                  @RequestParam(defaultValue = "10") Integer tamanho) throws EntityNotFoundException;
+    ResponseEntity<Page<CheckInDTO>> buscarHospedesFinalizadosPorPessoa(@PathVariable Long pessoaId,
+                                                                        @RequestParam(defaultValue = "0") Integer pagina,
+                                                                        @RequestParam(defaultValue = "10") Integer tamanho) throws EntityNotFoundException;
 
     @Operation(summary = "Busca check-in ativo de uma pessoa", description = "Busca o check-in ativo de uma pessoa específica")
     @ApiResponses(
@@ -132,7 +129,7 @@ public interface ICheckInController {
             }
     )
     @PutMapping("/{id}")
-    ResponseEntity<CheckInDTO> atualizarCheckIn(@PathVariable Long id, @Valid @RequestBody CheckInUpdateDTO checkInUpdateDTO) throws EntityNotFoundException;
+    ResponseEntity<CheckInDTO> atualizarCheckIn(@PathVariable Long id, @Valid @RequestBody CheckInDTO checkInDTO) throws EntityNotFoundException;
 
     @Operation(summary = "Deleta check-in por ID", description = "Remove um check-in do banco de dados")
     @ApiResponses(

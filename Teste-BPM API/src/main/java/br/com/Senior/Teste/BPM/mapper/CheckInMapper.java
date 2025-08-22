@@ -1,7 +1,6 @@
 package br.com.Senior.Teste.BPM.mapper;
 
 import br.com.Senior.Teste.BPM.controller.dto.CheckInDTO;
-import br.com.Senior.Teste.BPM.controller.dto.ConsultaHospedesDTO;
 import br.com.Senior.Teste.BPM.entity.CheckIn;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -45,50 +44,6 @@ public class CheckInMapper {
         checkIn.setValorTotal(dto.getValorTotal());
         
         return checkIn;
-    }
-
-    public ConsultaHospedesDTO converterConsultaHospedesDTO(CheckIn checkIn) {
-        if (checkIn == null) {
-            return null;
-        }
-        
-        LocalDateTime horaAtual = LocalDateTime.now();
-        String status = horaAtual.isAfter(checkIn.getDataSaidaPrevista()) ? "FINALIZADO" : "ATIVO";
-        Long numeroDias = java.time.temporal.ChronoUnit.DAYS.between(
-            checkIn.getDataEntrada().toLocalDate(), 
-            checkIn.getDataSaidaPrevista().toLocalDate()
-        );
-        
-        return new ConsultaHospedesDTO(
-            checkIn.getId(),
-            pessoaMapper.converterDTO(checkIn.getPessoa()),
-            checkIn.getDataEntrada(),
-            checkIn.getDataSaidaPrevista(),
-            checkIn.getAdicionalVeiculo(),
-            checkIn.getValorTotal(),
-            status,
-            numeroDias
-        );
-    }
-
-    public List<CheckInDTO> converterDTOList(List<CheckIn> checkIns) {
-        if (checkIns == null) {
-            return null;
-        }
-        
-        return checkIns.stream()
-                .map(this::converterDTO)
-                .collect(Collectors.toList());
-    }
-
-    public List<ConsultaHospedesDTO> converterConsultaHospedesDTOList(List<CheckIn> checkIns) {
-        if (checkIns == null) {
-            return null;
-        }
-        
-        return checkIns.stream()
-                .map(this::converterConsultaHospedesDTO)
-                .collect(Collectors.toList());
     }
 }
 
