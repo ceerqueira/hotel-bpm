@@ -1,8 +1,10 @@
 package br.com.Senior.Teste.BPM.controller;
 
-import br.com.Senior.Teste.BPM.dto.CheckInDTO;
-import br.com.Senior.Teste.BPM.dto.CheckInRequestDTO;
-import br.com.Senior.Teste.BPM.dto.ConsultaHospedesDTO;
+import br.com.Senior.Teste.BPM.controller.dto.CheckInDTO;
+import br.com.Senior.Teste.BPM.controller.dto.CheckInRequestDTO;
+import br.com.Senior.Teste.BPM.controller.dto.CheckInUpdateDTO;
+import br.com.Senior.Teste.BPM.controller.dto.ConsultaHospedesDTO;
+import br.com.Senior.Teste.BPM.entity.CheckIn;
 import br.com.Senior.Teste.BPM.exception.BusinessException;
 import br.com.Senior.Teste.BPM.exception.EntityNotFoundException;
 import br.com.Senior.Teste.BPM.mapper.CheckInMapper;
@@ -31,13 +33,13 @@ public class CheckInController implements ICheckInController {
     @PostMapping
     public ResponseEntity<CheckInDTO> realizarCheckIn(@Valid @RequestBody CheckInRequestDTO request) throws EntityNotFoundException, BusinessException {
         log.info("Realizando check-in para pessoa ID: {}", request.getPessoaId());
-        var checkIn = checkInService.realizarCheckIn(
+        CheckIn checkIn = checkInService.realizarCheckIn(
             request.getPessoaId(), 
             request.getDataEntrada(),
             request.getDataSaidaPrevista(),
             request.getAdicionalVeiculo()
         );
-        var checkInDTO = checkInMapper.converterDTO(checkIn);
+        CheckInDTO checkInDTO = checkInMapper.converterDTO(checkIn);
         log.info("Check-in realizado com sucesso!");
         return new ResponseEntity<>(checkInDTO, HttpStatus.OK);
     }
@@ -48,8 +50,8 @@ public class CheckInController implements ICheckInController {
             @RequestParam(defaultValue = "0") Integer pagina,
             @RequestParam(defaultValue = "10") Integer tamanho) throws EntityNotFoundException {
         log.info("Buscando check-ins da pessoa ID: {}, página: {}, tamanho: {}", pessoaId, pagina, tamanho);
-        var checkIns = checkInService.buscarCheckInsPorPessoa(pessoaId, pagina, tamanho);
-        var checkInsDTO = checkIns.map(checkInMapper::converterDTO);
+        Page<CheckIn> checkIns = checkInService.buscarCheckInsPorPessoa(pessoaId, pagina, tamanho);
+        Page<CheckInDTO> checkInsDTO = checkIns.map(checkInMapper::converterDTO);
         log.info("Check-ins encontrados com sucesso!");
         return new ResponseEntity<>(checkInsDTO, HttpStatus.OK);
     }
@@ -59,8 +61,8 @@ public class CheckInController implements ICheckInController {
             @RequestParam(defaultValue = "0") Integer pagina,
             @RequestParam(defaultValue = "10") Integer tamanho) {
         log.info("Buscando hóspedes ativos, página: {}, tamanho: {}", pagina, tamanho);
-        var checkIns = checkInService.buscarHospedesAtivos(pagina, tamanho);
-        var consultaDTO = checkIns.map(checkInMapper::converterConsultaHospedesDTO);
+        Page<CheckIn> checkIns = checkInService.buscarHospedesAtivos(pagina, tamanho);
+        Page<ConsultaHospedesDTO> consultaDTO = checkIns.map(checkInMapper::converterConsultaHospedesDTO);
         log.info("Hóspedes ativos encontrados com sucesso!");
         return new ResponseEntity<>(consultaDTO, HttpStatus.OK);
     }
@@ -70,8 +72,8 @@ public class CheckInController implements ICheckInController {
             @RequestParam(defaultValue = "0") Integer pagina,
             @RequestParam(defaultValue = "10") Integer tamanho) {
         log.info("Buscando hóspedes finalizados, página: {}, tamanho: {}", pagina, tamanho);
-        var checkIns = checkInService.buscarHospedesFinalizados(pagina, tamanho);
-        var consultaDTO = checkIns.map(checkInMapper::converterConsultaHospedesDTO);
+        Page<CheckIn> checkIns = checkInService.buscarHospedesFinalizados(pagina, tamanho);
+        Page<ConsultaHospedesDTO> consultaDTO = checkIns.map(checkInMapper::converterConsultaHospedesDTO);
         log.info("Hóspedes finalizados encontrados com sucesso!");
         return new ResponseEntity<>(consultaDTO, HttpStatus.OK);
     }
@@ -82,8 +84,8 @@ public class CheckInController implements ICheckInController {
             @RequestParam(defaultValue = "0") Integer pagina,
             @RequestParam(defaultValue = "10") Integer tamanho) throws EntityNotFoundException {
         log.info("Buscando hóspedes ativos da pessoa ID: {}, página: {}, tamanho: {}", pessoaId, pagina, tamanho);
-        var checkIns = checkInService.buscarHospedesAtivosPorPessoa(pessoaId, pagina, tamanho);
-        var consultaDTO = checkIns.map(checkInMapper::converterConsultaHospedesDTO);
+        Page<CheckIn> checkIns = checkInService.buscarHospedesAtivosPorPessoa(pessoaId, pagina, tamanho);
+        Page<ConsultaHospedesDTO> consultaDTO = checkIns.map(checkInMapper::converterConsultaHospedesDTO);
         log.info("Hóspedes ativos da pessoa encontrados com sucesso!");
         return new ResponseEntity<>(consultaDTO, HttpStatus.OK);
     }
@@ -94,8 +96,8 @@ public class CheckInController implements ICheckInController {
             @RequestParam(defaultValue = "0") Integer pagina,
             @RequestParam(defaultValue = "10") Integer tamanho) throws EntityNotFoundException {
         log.info("Buscando hóspedes finalizados da pessoa ID: {}, página: {}, tamanho: {}", pessoaId, pagina, tamanho);
-        var checkIns = checkInService.buscarHospedesFinalizadosPorPessoa(pessoaId, pagina, tamanho);
-        var consultaDTO = checkIns.map(checkInMapper::converterConsultaHospedesDTO);
+        Page<CheckIn> checkIns = checkInService.buscarHospedesFinalizadosPorPessoa(pessoaId, pagina, tamanho);
+        Page<ConsultaHospedesDTO> consultaDTO = checkIns.map(checkInMapper::converterConsultaHospedesDTO);
         log.info("Hóspedes finalizados da pessoa encontrados com sucesso!");
         return new ResponseEntity<>(consultaDTO, HttpStatus.OK);
     }
@@ -103,9 +105,51 @@ public class CheckInController implements ICheckInController {
     @GetMapping("/pessoas/{pessoaId}/check-in/ativo")
     public ResponseEntity<CheckInDTO> buscarCheckInAtivoPorPessoa(@PathVariable Long pessoaId) throws EntityNotFoundException, BusinessException {
         log.info("Buscando check-in ativo da pessoa ID: {}", pessoaId);
-        var checkIn = checkInService.buscarCheckInAtivoPorPessoa(pessoaId);
-        var checkInDTO = checkInMapper.converterDTO(checkIn);
+        CheckIn checkIn = checkInService.buscarCheckInAtivoPorPessoa(pessoaId);
+        CheckInDTO checkInDTO = checkInMapper.converterDTO(checkIn);
         log.info("Check-in ativo encontrado com sucesso!");
         return new ResponseEntity<>(checkInDTO, HttpStatus.OK);
+    }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<CheckInDTO> buscarCheckInPorId(@PathVariable Long id) throws EntityNotFoundException {
+        log.info("Buscando check-in por ID: {}", id);
+        CheckIn checkIn = checkInService.buscarCheckInPorId(id);
+        CheckInDTO checkInDTO = checkInMapper.converterDTO(checkIn);
+        log.info("Check-in encontrado com sucesso!");
+        return new ResponseEntity<>(checkInDTO, HttpStatus.OK);
+    }
+    
+    @PutMapping("/{id}")
+    public ResponseEntity<CheckInDTO> atualizarCheckIn(@PathVariable Long id, @Valid @RequestBody CheckInUpdateDTO checkInUpdateDTO) throws EntityNotFoundException {
+        log.info("Atualizando check-in com ID: {}", id);
+        CheckIn checkInAtualizado = CheckIn.builder()
+                .dataEntrada(checkInUpdateDTO.getDataEntrada())
+                .dataSaidaPrevista(checkInUpdateDTO.getDataSaidaPrevista())
+                .adicionalVeiculo(checkInUpdateDTO.getAdicionalVeiculo())
+                .build();
+        CheckIn checkIn = checkInService.atualizarCheckIn(id, checkInAtualizado);
+        CheckInDTO checkInDTO = checkInMapper.converterDTO(checkIn);
+        log.info("Check-in atualizado com sucesso!");
+        return new ResponseEntity<>(checkInDTO, HttpStatus.OK);
+    }
+    
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletarCheckIn(@PathVariable Long id) throws EntityNotFoundException {
+        log.info("Deletando check-in com ID: {}", id);
+        checkInService.deletarCheckIn(id);
+        log.info("Check-in deletado com sucesso!");
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    
+    @GetMapping
+    public ResponseEntity<Page<CheckInDTO>> listarTodosCheckIns(
+            @RequestParam(defaultValue = "0") Integer pagina,
+            @RequestParam(defaultValue = "10") Integer tamanho) {
+        log.info("Listando todos os check-ins, página: {}, tamanho: {}", pagina, tamanho);
+        Page<CheckIn> checkIns = checkInService.listarTodosCheckIns(pagina, tamanho);
+        Page<CheckInDTO> checkInsDTO = checkIns.map(checkInMapper::converterDTO);
+        log.info("Check-ins listados com sucesso!");
+        return new ResponseEntity<>(checkInsDTO, HttpStatus.OK);
     }
 }

@@ -1,8 +1,9 @@
 package br.com.Senior.Teste.BPM.controller;
 
-import br.com.Senior.Teste.BPM.dto.CheckInDTO;
-import br.com.Senior.Teste.BPM.dto.CheckInRequestDTO;
-import br.com.Senior.Teste.BPM.dto.ConsultaHospedesDTO;
+import br.com.Senior.Teste.BPM.controller.dto.CheckInDTO;
+import br.com.Senior.Teste.BPM.controller.dto.CheckInRequestDTO;
+import br.com.Senior.Teste.BPM.controller.dto.CheckInUpdateDTO;
+import br.com.Senior.Teste.BPM.controller.dto.ConsultaHospedesDTO;
 import br.com.Senior.Teste.BPM.exception.BusinessException;
 import br.com.Senior.Teste.BPM.exception.EntityNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -107,5 +108,54 @@ public interface ICheckInController {
     )
     @GetMapping("/pessoas/{pessoaId}/check-in/ativo")
     ResponseEntity<CheckInDTO> buscarCheckInAtivoPorPessoa(@PathVariable Long pessoaId) throws EntityNotFoundException, BusinessException;
+
+    @Operation(summary = "Busca check-in por ID", description = "Busca um check-in específico por ID no banco de dados")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Check-in encontrado com sucesso!"),
+                    @ApiResponse(responseCode = "404", description = "Check-in não encontrado"),
+                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
+                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
+            }
+    )
+    @GetMapping("/{id}")
+    ResponseEntity<CheckInDTO> buscarCheckInPorId(@PathVariable Long id) throws EntityNotFoundException;
+
+    @Operation(summary = "Atualiza check-in por ID", description = "Atualiza um check-in existente no banco de dados")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Check-in atualizado com sucesso!"),
+                    @ApiResponse(responseCode = "404", description = "Check-in não encontrado"),
+                    @ApiResponse(responseCode = "400", description = "Dados inválidos"),
+                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
+                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
+            }
+    )
+    @PutMapping("/{id}")
+    ResponseEntity<CheckInDTO> atualizarCheckIn(@PathVariable Long id, @Valid @RequestBody CheckInUpdateDTO checkInUpdateDTO) throws EntityNotFoundException;
+
+    @Operation(summary = "Deleta check-in por ID", description = "Remove um check-in do banco de dados")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "204", description = "Check-in deletado com sucesso!"),
+                    @ApiResponse(responseCode = "404", description = "Check-in não encontrado"),
+                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
+                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
+            }
+    )
+    @DeleteMapping("/{id}")
+    ResponseEntity<Void> deletarCheckIn(@PathVariable Long id) throws EntityNotFoundException;
+
+    @Operation(summary = "Lista todos os check-ins", description = "Lista todos os check-ins no banco de dados com paginação")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Check-ins listados com sucesso!"),
+                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
+                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
+            }
+    )
+    @GetMapping
+    ResponseEntity<Page<CheckInDTO>> listarTodosCheckIns(@RequestParam(defaultValue = "0") Integer pagina,
+                                                          @RequestParam(defaultValue = "10") Integer tamanho);
 }
 

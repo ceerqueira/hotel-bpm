@@ -1,7 +1,7 @@
 package br.com.Senior.Teste.BPM.mapper;
 
-import br.com.Senior.Teste.BPM.dto.CheckInDTO;
-import br.com.Senior.Teste.BPM.dto.ConsultaHospedesDTO;
+import br.com.Senior.Teste.BPM.controller.dto.CheckInDTO;
+import br.com.Senior.Teste.BPM.controller.dto.ConsultaHospedesDTO;
 import br.com.Senior.Teste.BPM.entity.CheckIn;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

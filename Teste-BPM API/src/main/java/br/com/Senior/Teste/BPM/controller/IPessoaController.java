@@ -1,6 +1,6 @@
 package br.com.Senior.Teste.BPM.controller;
 
-import br.com.Senior.Teste.BPM.dto.PessoaDTO;
+import br.com.Senior.Teste.BPM.controller.dto.PessoaDTO;
 import br.com.Senior.Teste.BPM.exception.BusinessException;
 import br.com.Senior.Teste.BPM.exception.EntityNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,7 +17,7 @@ public interface IPessoaController {
     @Operation(summary = "Cadastra uma nova pessoa", description = "Cria uma nova pessoa no banco de dados")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "Pessoa cadastrada com sucesso!"),
+                    @ApiResponse(responseCode = "201", description = "Pessoa cadastrada com sucesso!"),
                     @ApiResponse(responseCode = "400", description = "Dados inválidos ou pessoa já existe"),
                     @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
                     @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
@@ -67,7 +67,7 @@ public interface IPessoaController {
     @Operation(summary = "Deleta pessoa por ID", description = "Remove uma pessoa do banco de dados")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "Pessoa deletada com sucesso!"),
+                    @ApiResponse(responseCode = "204", description = "Pessoa deletada com sucesso!"),
                     @ApiResponse(responseCode = "404", description = "Pessoa não encontrada"),
                     @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
                     @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")

@@ -1,6 +1,6 @@
 package br.com.Senior.Teste.BPM.mapper;
 
-import br.com.Senior.Teste.BPM.dto.PessoaDTO;
+import br.com.Senior.Teste.BPM.controller.dto.PessoaDTO;
 import br.com.Senior.Teste.BPM.entity.Pessoa;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

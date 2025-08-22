@@ -1,4 +1,4 @@
-package br.com.Senior.Teste.BPM.dto;
+package br.com.Senior.Teste.BPM.controller.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ConsultaHospedesDTO {
+public class CheckInDTO {
     
     private Long id;
     private PessoaDTO pessoa;
@@ -18,6 +18,4 @@ public class ConsultaHospedesDTO {
     private LocalDateTime dataSaidaPrevista;
     private Boolean adicionalVeiculo;
     private BigDecimal valorTotal;
-    private String status; // "ATIVO" ou "FINALIZADO"
-    private Long numeroDias;
 }

@@ -17,17 +17,11 @@ public interface PessoaRepository extends JpaRepository<Pessoa, Long> {
     Optional<Pessoa> findByDocumento(String documento);
     
     boolean existsByDocumento(String documento);
-    
-    @Query("SELECT p FROM Pessoa p WHERE p.nome LIKE %:nome% OR p.documento LIKE %:documento%")
-    List<Pessoa> findByNomeOrDocumentoContaining(@Param("nome") String nome, @Param("documento") String documento);
-    
+
     @Query("SELECT p FROM Pessoa p WHERE p.nome LIKE %:nome% OR p.documento LIKE %:documento%")
     Page<Pessoa> findByNomeOrDocumentoContaining(@Param("nome") String nome, @Param("documento") String documento, Pageable pageable);
     
     List<Pessoa> findByNomeContainingIgnoreCase(String nome);
     
     List<Pessoa> findByDocumentoContaining(String documento);
-    
-    // Busca pessoa por ID e nome (para validações específicas)
-    Optional<Pessoa> findByIdAndNome(Long id, String nome);
 }

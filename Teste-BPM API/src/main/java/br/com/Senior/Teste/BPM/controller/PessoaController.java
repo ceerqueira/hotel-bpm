@@ -1,6 +1,7 @@
 package br.com.Senior.Teste.BPM.controller;
 
-import br.com.Senior.Teste.BPM.dto.PessoaDTO;
+import br.com.Senior.Teste.BPM.controller.dto.PessoaDTO;
+import br.com.Senior.Teste.BPM.entity.Pessoa;
 import br.com.Senior.Teste.BPM.exception.BusinessException;
 import br.com.Senior.Teste.BPM.exception.EntityNotFoundException;
 import br.com.Senior.Teste.BPM.mapper.PessoaMapper;
@@ -29,11 +30,9 @@ public class PessoaController implements IPessoaController {
     @PostMapping
     public ResponseEntity<PessoaDTO> cadastrarPessoa(@Valid @RequestBody PessoaDTO pessoaDTO) throws BusinessException {
         log.info("Cadastrando nova pessoa...");
-        var pessoa = pessoaMapper.converterEntity(pessoaDTO);
-        var pessoaSalva = pessoaService.cadastrarPessoa(pessoa);
-        var pessoaSalvaDTO = pessoaMapper.converterDTO(pessoaSalva);
+        Pessoa pessoa = pessoaService.cadastrarPessoa(pessoaMapper.converterEntity(pessoaDTO));
         log.info("Pessoa cadastrada com sucesso!");
-        return new ResponseEntity<>(pessoaSalvaDTO, HttpStatus.OK);
+        return new ResponseEntity<>(pessoaMapper.converterDTO(pessoa), HttpStatus.CREATED);
     }
     
     @GetMapping
@@ -42,8 +41,8 @@ public class PessoaController implements IPessoaController {
             @RequestParam(defaultValue = "0") Integer pagina,
             @RequestParam(defaultValue = "10") Integer tamanho) {
         log.info("Buscando pessoas com termo: {}, página: {}, tamanho: {}", termo, pagina, tamanho);
-        var pessoas = pessoaService.buscarPessoas(termo, pagina, tamanho);
-        var pessoasDTO = pessoas.map(pessoaMapper::converterDTO);
+        Page<Pessoa> pessoas = pessoaService.buscarPessoas(termo, pagina, tamanho);
+        Page<PessoaDTO> pessoasDTO = pessoas.map(pessoaMapper::converterDTO);
         log.info("Busca de pessoas realizada com sucesso!");
         return new ResponseEntity<>(pessoasDTO, HttpStatus.OK);
     }
@@ -51,19 +50,19 @@ public class PessoaController implements IPessoaController {
     @GetMapping("/{id}")
     public ResponseEntity<PessoaDTO> buscarPessoaPorId(@PathVariable Long id) throws EntityNotFoundException {
         log.info("Buscando pessoa por ID: {}", id);
-        var pessoa = pessoaService.buscarPessoaPorId(id);
-        var pessoaDTO = pessoaMapper.converterDTO(pessoa);
+        Pessoa pessoa = pessoaService.buscarPessoaPorId(id);
+        PessoaDTO pessoaDTO = pessoaMapper.converterDTO(pessoa);
         log.info("Pessoa encontrada com sucesso!");
         return new ResponseEntity<>(pessoaDTO, HttpStatus.OK);
     }
-    
+
     @PutMapping("/{id}")
     public ResponseEntity<PessoaDTO> atualizarPessoa(@PathVariable Long id, @Valid @RequestBody PessoaDTO pessoaDTO) throws EntityNotFoundException {
         log.info("Atualizando pessoa com ID: {}", id);
         pessoaDTO.setId(id);
-        var pessoa = pessoaMapper.converterEntity(pessoaDTO);
-        var pessoaSalva = pessoaService.atualizarPessoa(id, pessoa);
-        var pessoaSalvaDTO = pessoaMapper.converterDTO(pessoaSalva);
+        Pessoa pessoa = pessoaMapper.converterEntity(pessoaDTO);
+        Pessoa pessoaSalva = pessoaService.atualizarPessoa(id, pessoa);
+        PessoaDTO pessoaSalvaDTO = pessoaMapper.converterDTO(pessoaSalva);
         log.info("Pessoa atualizada com sucesso!");
         return new ResponseEntity<>(pessoaSalvaDTO, HttpStatus.OK);
     }
@@ -73,6 +72,6 @@ public class PessoaController implements IPessoaController {
         log.info("Deletando pessoa com ID: {}", id);
         pessoaService.deletarPessoa(id);
         log.info("Pessoa deletada com sucesso!");
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

@@ -1,4 +1,4 @@
-package br.com.Senior.Teste.BPM.dto;
+package br.com.Senior.Teste.BPM.controller.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -21,8 +21,6 @@ public class PricingService {
         if (dataSaida == null) {
             return BigDecimal.ZERO;
         }
-        
-        // Se o checkout for após 16:30, adiciona uma noite extra
         if (dataSaida.toLocalTime().isAfter(HORARIO_LIMITE_CHECKOUT)) {
             dataSaida = dataSaida.plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
         }
@@ -33,8 +31,7 @@ public class PricingService {
         
         while (dataAtual.isBefore(dataFim)) {
             DayOfWeek diaSemana = dataAtual.getDayOfWeek();
-            
-            // Verifica se é fim de semana (Sábado ou Domingo)
+
             boolean isFimDeSemana = diaSemana == DayOfWeek.SATURDAY || diaSemana == DayOfWeek.SUNDAY;
             
             BigDecimal precoDiaria = isFimDeSemana ? PRECO_DIARIA_FIM_SEMANA : PRECO_DIARIA_SEMANA;
@@ -56,8 +53,7 @@ public class PricingService {
         if (dataSaida == null) {
             return 0L;
         }
-        
-        // Se o checkout for após 16:30, adiciona uma noite extra
+
         if (dataSaida.toLocalTime().isAfter(HORARIO_LIMITE_CHECKOUT)) {
             dataSaida = dataSaida.plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
         }
