@@ -3,7 +3,7 @@ spring:
     name: Teste-BPM
 
   datasource:
-    url: jdbc:mysql://localhost:3306/hotel_bpm?useSSL=false&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
+    url: jdbc:mysql://mysql:3306/hotel_bpm?useSSL=false&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
