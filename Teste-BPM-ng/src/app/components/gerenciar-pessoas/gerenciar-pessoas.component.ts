@@ -11,7 +11,7 @@ import { PageResponse } from '../../models/check-in.model';
 export class GerenciarPessoasComponent implements OnInit {
   pessoas: Pessoa[] = [];
   currentPage = 0;
-  pageSize = 10;
+  pageSize = 5;
   totalElements = 0;
   totalPages = 0;
   loading = false;
@@ -19,6 +19,8 @@ export class GerenciarPessoasComponent implements OnInit {
   showEditForm = false;
   showAddForm = false;
   searchTerm = '';
+
+  pageSizeOptions = [5, 10, 20, 50];
 
   constructor(private pessoaService: PessoaService) { }
 
@@ -48,6 +50,14 @@ export class GerenciarPessoasComponent implements OnInit {
     this.carregarPessoas();
   }
 
+  onPageSizeChange(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    const newSize = parseInt(target.value);
+    this.pageSize = newSize;
+    this.currentPage = 0;
+    this.carregarPessoas();
+  }
+
   onSearch(): void {
     this.currentPage = 0;
     this.carregarPessoas();
@@ -70,7 +80,6 @@ export class GerenciarPessoasComponent implements OnInit {
   salvarPessoa(): void {
     if (this.editingPessoa) {
       if (this.showAddForm) {
-        // Adicionar nova pessoa
         this.pessoaService.cadastrarPessoa(this.editingPessoa)
           .subscribe({
             next: () => {
@@ -82,7 +91,6 @@ export class GerenciarPessoasComponent implements OnInit {
             }
           });
       } else if (this.editingPessoa.id) {
-        // Atualizar pessoa existente
         this.pessoaService.atualizarPessoa(this.editingPessoa.id, this.editingPessoa)
           .subscribe({
             next: () => {

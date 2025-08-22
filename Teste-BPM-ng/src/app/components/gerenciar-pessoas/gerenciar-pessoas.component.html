@@ -2,6 +2,20 @@
   <div class="content-card">
     <div class="card-header">
       <h2>Gerenciar Pessoas</h2>
+      
+      <div class="page-size-controls">
+        <label for="pageSize">Itens por página:</label>
+        <select 
+          id="pageSize" 
+          class="page-size-select"
+          [value]="pageSize"
+          (change)="onPageSizeChange($event)"
+        >
+          <option *ngFor="let size of pageSizeOptions" [value]="size">
+            {{ size }}
+          </option>
+        </select>
+      </div>
     </div>
 
     <div class="card-content">
@@ -79,34 +93,17 @@
           </table>
         </div>
 
-        <!-- Paginação -->
-        <div *ngIf="totalPages > 1" class="pagination-container">
-          <nav class="pagination">
-            <button class="page-btn" [disabled]="currentPage === 0" (click)="onPageChange(currentPage - 1)">
-              <i class="fas fa-chevron-left"></i> Anterior
-            </button>
-
-            <div class="page-numbers">
-              <button
-                *ngFor="let page of [].constructor(totalPages); let i = index"
-                class="page-btn"
-                [class.active]="currentPage === i"
-                (click)="onPageChange(i)"
-              >
-                {{ i + 1 }}
-              </button>
-            </div>
-
-            <button class="page-btn" [disabled]="currentPage === totalPages - 1" (click)="onPageChange(currentPage + 1)">
-              Próximo <i class="fas fa-chevron-right"></i>
-            </button>
-          </nav>
-        </div>
+        <app-pagination
+          [currentPage]="currentPage"
+          [totalPages]="totalPages"
+          [totalElements]="totalElements"
+          [pageSize]="pageSize"
+          (pageChange)="onPageChange($event)"
+        ></app-pagination>
       </div>
     </div>
   </div>
 
-  <!-- Modal de Adição/Edição -->
   <div class="modal" [class.show]="showEditForm || showAddForm" *ngIf="showEditForm || showAddForm">
     <div class="modal-overlay" (click)="cancelarEdicao()"></div>
     <div class="modal-content">

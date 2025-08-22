@@ -11,7 +11,6 @@ export class CheckInService {
 
   constructor(private http: HttpClient) { }
 
-  // Métodos para Check-in
   realizarCheckIn(checkInRequest: CheckInRequest): Observable<CheckIn> {
     return this.http.post<CheckIn>(`${this.apiUrl}/check-in`, checkInRequest);
   }
@@ -28,42 +27,42 @@ export class CheckInService {
     return this.http.delete<void>(`${this.apiUrl}/check-in/${id}`);
   }
 
-  listarTodosCheckIns(pagina: number = 0, tamanho: number = 10): Observable<PageResponse<CheckIn>> {
+  listarTodosCheckIns(pagina: number = 0, tamanho: number = 5): Observable<PageResponse<CheckIn>> {
     const params = new HttpParams()
       .set('pagina', pagina.toString())
       .set('tamanho', tamanho.toString());
     return this.http.get<PageResponse<CheckIn>>(`${this.apiUrl}/check-in`, { params });
   }
 
-  buscarCheckInsPorPessoa(pessoaId: number, pagina: number = 0, tamanho: number = 10): Observable<PageResponse<CheckIn>> {
+  buscarCheckInsPorPessoa(pessoaId: number, pagina: number = 0, tamanho: number = 5): Observable<PageResponse<CheckIn>> {
     const params = new HttpParams()
       .set('pagina', pagina.toString())
       .set('tamanho', tamanho.toString());
     return this.http.get<PageResponse<CheckIn>>(`${this.apiUrl}/check-in/pessoas/${pessoaId}`, { params });
   }
 
-  buscarHospedesAtivos(pagina: number = 0, tamanho: number = 10): Observable<PageResponse<CheckIn>> {
+  buscarHospedesAtivos(pagina: number = 0, tamanho: number = 5): Observable<PageResponse<CheckIn>> {
     const params = new HttpParams()
       .set('pagina', pagina.toString())
       .set('tamanho', tamanho.toString());
     return this.http.get<PageResponse<CheckIn>>(`${this.apiUrl}/check-in/hospedes/ativos`, { params });
   }
 
-  buscarHospedesFinalizados(pagina: number = 0, tamanho: number = 10): Observable<PageResponse<CheckIn>> {
+  buscarHospedesFinalizados(pagina: number = 0, tamanho: number = 5): Observable<PageResponse<CheckIn>> {
     const params = new HttpParams()
       .set('pagina', pagina.toString())
       .set('tamanho', tamanho.toString());
     return this.http.get<PageResponse<CheckIn>>(`${this.apiUrl}/check-in/hospedes/finalizados`, { params });
   }
 
-  buscarHospedesAtivosPorPessoa(pessoaId: number, pagina: number = 0, tamanho: number = 10): Observable<PageResponse<CheckIn>> {
+  buscarHospedesAtivosPorPessoa(pessoaId: number, pagina: number = 0, tamanho: number = 5): Observable<PageResponse<CheckIn>> {
     const params = new HttpParams()
       .set('pagina', pagina.toString())
       .set('tamanho', tamanho.toString());
     return this.http.get<PageResponse<CheckIn>>(`${this.apiUrl}/check-in/pessoas/${pessoaId}/hospedes/ativos`, { params });
   }
 
-  buscarHospedesFinalizadosPorPessoa(pessoaId: number, pagina: number = 0, tamanho: number = 10): Observable<PageResponse<CheckIn>> {
+  buscarHospedesFinalizadosPorPessoa(pessoaId: number, pagina: number = 0, tamanho: number = 5): Observable<PageResponse<CheckIn>> {
     const params = new HttpParams()
       .set('pagina', pagina.toString())
       .set('tamanho', tamanho.toString());

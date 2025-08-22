@@ -12,12 +12,11 @@ export class PessoaService {
 
   constructor(private http: HttpClient) { }
 
-  // Métodos para Pessoas
   cadastrarPessoa(pessoa: Pessoa): Observable<Pessoa> {
     return this.http.post<Pessoa>(`${this.apiUrl}/pessoas`, pessoa);
   }
 
-  buscarPessoas(termo?: string, pagina: number = 0, tamanho: number = 10): Observable<PageResponse<Pessoa>> {
+  buscarPessoas(termo?: string, pagina: number = 0, tamanho: number = 5): Observable<PageResponse<Pessoa>> {
     let params = new HttpParams()
       .set('pagina', pagina.toString())
       .set('tamanho', tamanho.toString());

@@ -20,13 +20,50 @@
   background: #1976d2;
   color: white;
   padding: 20px;
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
 }
 
 .card-header h2 {
   margin: 0;
   font-size: 24px;
   font-weight: 500;
+}
+
+.page-size-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.page-size-controls label {
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+  margin: 0;
+}
+
+.page-size-select {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.page-size-select:focus {
+  outline: none;
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
 }
 
 .card-content {
@@ -236,52 +273,7 @@
   background: #c82333;
 }
 
-.pagination-container {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-}
 
-.pagination {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.page-btn {
-  border: 1px solid #dee2e6;
-  background: white;
-  padding: 8px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.page-btn:hover:not(:disabled) {
-  background: #e9ecef;
-  border-color: #adb5bd;
-}
-
-.page-btn.active {
-  background: #1976d2;
-  color: white;
-  border-color: #1976d2;
-}
-
-.page-btn:disabled {
-  background: #f8f9fa;
-  color: #6c757d;
-  cursor: not-allowed;
-}
-
-.page-numbers {
-  display: flex;
-  gap: 5px;
-}
 
 /* Modal */
 .modal {
@@ -435,6 +427,16 @@
     margin: 0;
   }
   
+  .card-header {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+  
+  .page-size-controls {
+    justify-content: center;
+  }
+  
   .data-table {
     font-size: 12px;
   }
@@ -452,18 +454,6 @@
   .btn-edit, .btn-delete {
     width: 28px;
     height: 28px;
-  }
-  
-  .pagination {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  
-  .page-numbers {
-    order: 2;
-    width: 100%;
-    justify-content: center;
-    margin: 10px 0;
   }
   
   .modal-content {

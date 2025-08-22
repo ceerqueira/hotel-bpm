@@ -9,6 +9,7 @@ import { CheckInComponent } from './components/check-in/check-in.component';
 import { PessoaComponent } from './components/pessoa/pessoa.component';
 import { GerenciarCheckInsComponent } from './components/gerenciar-check-ins/gerenciar-check-ins.component';
 import { GerenciarPessoasComponent } from './components/gerenciar-pessoas/gerenciar-pessoas.component';
+import { PaginationComponent } from './components/pagination/pagination.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { GerenciarPessoasComponent } from './components/gerenciar-pessoas/gerenc
     CheckInComponent,
     PessoaComponent,
     GerenciarCheckInsComponent,
-    GerenciarPessoasComponent
+    GerenciarPessoasComponent,
+    PaginationComponent
   ],
   imports: [
     BrowserModule,

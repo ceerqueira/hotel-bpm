@@ -11,14 +11,28 @@ export class GerenciarCheckInsComponent implements OnInit {
   checkIns: CheckIn[] = [];
   checkInsAtivos: CheckIn[] = [];
   checkInsFinalizados: CheckIn[] = [];
+  
   currentPage = 0;
-  pageSize = 10;
+  pageSize = 5;
   totalElements = 0;
   totalPages = 0;
+  
+  currentPageAtivos = 0;
+  totalElementsAtivos = 0;
+  totalPagesAtivos = 0;
+  
+  currentPageFinalizados = 0;
+  totalElementsFinalizados = 0;
+  totalPagesFinalizados = 0;
+  
   loading = false;
+  loadingAtivos = false;
+  loadingFinalizados = false;
   editingCheckIn: CheckIn | null = null;
   showEditForm = false;
   activeTab = 'todos';
+
+  pageSizeOptions = [5, 10, 20, 50];
 
   constructor(private checkInService: CheckInService) { }
 
@@ -30,15 +44,6 @@ export class GerenciarCheckInsComponent implements OnInit {
 
   setActiveTab(tab: string): void {
     this.activeTab = tab;
-
-    // Recarregar dados específicos da aba selecionada
-    if (tab === 'ativos') {
-      this.carregarHospedesAtivos();
-    } else if (tab === 'finalizados') {
-      this.carregarHospedesFinalizados();
-    } else if (tab === 'todos') {
-      this.carregarCheckIns();
-    }
   }
 
   carregarCheckIns(): void {
@@ -59,33 +64,37 @@ export class GerenciarCheckInsComponent implements OnInit {
   }
 
   carregarHospedesAtivos(): void {
-    this.loading = true;
-    this.checkInService.buscarHospedesAtivos()
+    this.loadingAtivos = true;
+    this.checkInService.buscarHospedesAtivos(this.currentPageAtivos, this.pageSize)
       .subscribe({
         next: (response: PageResponse<CheckIn>) => {
           this.checkInsAtivos = response.content || [];
-          this.loading = false;
+          this.totalElementsAtivos = response.totalElements;
+          this.totalPagesAtivos = response.totalPages;
+          this.loadingAtivos = false;
         },
         error: (error) => {
           console.error('Erro ao carregar hóspedes ativos:', error);
           this.checkInsAtivos = [];
-          this.loading = false;
+          this.loadingAtivos = false;
         }
       });
   }
 
   carregarHospedesFinalizados(): void {
-    this.loading = true;
-    this.checkInService.buscarHospedesFinalizados()
+    this.loadingFinalizados = true;
+    this.checkInService.buscarHospedesFinalizados(this.currentPageFinalizados, this.pageSize)
       .subscribe({
         next: (response: PageResponse<CheckIn>) => {
           this.checkInsFinalizados = response.content || [];
-          this.loading = false;
+          this.totalElementsFinalizados = response.totalElements;
+          this.totalPagesFinalizados = response.totalPages;
+          this.loadingFinalizados = false;
         },
         error: (error) => {
           console.error('Erro ao carregar hóspedes finalizados:', error);
           this.checkInsFinalizados = [];
-          this.loading = false;
+          this.loadingFinalizados = false;
         }
       });
   }
@@ -93,6 +102,33 @@ export class GerenciarCheckInsComponent implements OnInit {
   onPageChange(page: number): void {
     this.currentPage = page;
     this.carregarCheckIns();
+  }
+
+  onPageChangeAtivos(page: number): void {
+    this.currentPageAtivos = page;
+    this.carregarHospedesAtivos();
+  }
+
+  onPageChangeFinalizados(page: number): void {
+    this.currentPageFinalizados = page;
+    this.carregarHospedesFinalizados();
+  }
+
+  onPageSizeChange(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    const newSize = parseInt(target.value);
+    this.pageSize = newSize;
+    this.currentPage = 0;
+    this.currentPageAtivos = 0;
+    this.currentPageFinalizados = 0;
+    
+    if (this.activeTab === 'todos') {
+      this.carregarCheckIns();
+    } else if (this.activeTab === 'ativos') {
+      this.carregarHospedesAtivos();
+    } else if (this.activeTab === 'finalizados') {
+      this.carregarHospedesFinalizados();
+    }
   }
 
   editarCheckIn(checkIn: CheckIn): void {
