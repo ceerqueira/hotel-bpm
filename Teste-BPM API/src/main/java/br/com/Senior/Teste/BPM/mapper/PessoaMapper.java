@@ -5,9 +5,6 @@ import br.com.Senior.Teste.BPM.entity.Pessoa;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Component
 @RequiredArgsConstructor
 public class PessoaMapper {
@@ -36,16 +33,6 @@ public class PessoaMapper {
             dto.getDocumento(),
             dto.getTelefone()
         );
-    }
-
-    public List<PessoaDTO> converterDTOList(List<Pessoa> pessoas) {
-        if (pessoas == null) {
-            return null;
-        }
-        
-        return pessoas.stream()
-                .map(this::converterDTO)
-                .collect(Collectors.toList());
     }
 }
 

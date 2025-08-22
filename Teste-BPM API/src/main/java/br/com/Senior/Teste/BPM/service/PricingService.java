@@ -29,9 +29,9 @@ public class PricingService {
         LocalDateTime dataAtual = dataEntrada.toLocalDate().atStartOfDay();
         LocalDateTime dataFim = dataSaida.toLocalDate().atStartOfDay();
         
-        while (dataAtual.isBefore(dataFim)) {
+        // Se as datas são iguais, cobra pelo menos uma diária
+        if (dataAtual.isEqual(dataFim)) {
             DayOfWeek diaSemana = dataAtual.getDayOfWeek();
-
             boolean isFimDeSemana = diaSemana == DayOfWeek.SATURDAY || diaSemana == DayOfWeek.SUNDAY;
             
             BigDecimal precoDiaria = isFimDeSemana ? PRECO_DIARIA_FIM_SEMANA : PRECO_DIARIA_SEMANA;
@@ -42,8 +42,23 @@ public class PricingService {
             if (adicionalVeiculo != null && adicionalVeiculo) {
                 valorTotal = valorTotal.add(adicionalEstacionamento);
             }
-            
-            dataAtual = dataAtual.plusDays(1);
+        } else {
+            while (dataAtual.isBefore(dataFim)) {
+                DayOfWeek diaSemana = dataAtual.getDayOfWeek();
+
+                boolean isFimDeSemana = diaSemana == DayOfWeek.SATURDAY || diaSemana == DayOfWeek.SUNDAY;
+                
+                BigDecimal precoDiaria = isFimDeSemana ? PRECO_DIARIA_FIM_SEMANA : PRECO_DIARIA_SEMANA;
+                BigDecimal adicionalEstacionamento = isFimDeSemana ? ADICIONAL_ESTACIONAMENTO_FIM_SEMANA : ADICIONAL_ESTACIONAMENTO_SEMANA;
+                
+                valorTotal = valorTotal.add(precoDiaria);
+                
+                if (adicionalVeiculo != null && adicionalVeiculo) {
+                    valorTotal = valorTotal.add(adicionalEstacionamento);
+                }
+                
+                dataAtual = dataAtual.plusDays(1);
+            }
         }
         
         return valorTotal;

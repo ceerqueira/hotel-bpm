@@ -3,15 +3,15 @@
     <div class="card-header">
       <h2>Gerenciar Pessoas</h2>
     </div>
-    
+
     <div class="card-content">
       <div class="actions-bar">
         <div class="search-section">
           <div class="search-box">
-            <input 
-              type="text" 
-              placeholder="Buscar por nome ou documento..." 
-              [(ngModel)]="searchTerm" 
+            <input
+              type="text"
+              placeholder="Buscar por nome ou documento..."
+              [(ngModel)]="searchTerm"
               (keyup.enter)="onSearch()"
               class="search-input"
             >
@@ -23,7 +23,7 @@
             </button>
           </div>
         </div>
-        
+
         <div class="actions-section">
           <button class="btn-primary" (click)="adicionarPessoa()">
             <i class="fas fa-plus"></i> Nova Pessoa
@@ -85,18 +85,18 @@
             <button class="page-btn" [disabled]="currentPage === 0" (click)="onPageChange(currentPage - 1)">
               <i class="fas fa-chevron-left"></i> Anterior
             </button>
-            
+
             <div class="page-numbers">
-              <button 
-                *ngFor="let page of [].constructor(totalPages); let i = index" 
-                class="page-btn" 
+              <button
+                *ngFor="let page of [].constructor(totalPages); let i = index"
+                class="page-btn"
                 [class.active]="currentPage === i"
                 (click)="onPageChange(i)"
               >
                 {{ i + 1 }}
               </button>
             </div>
-            
+
             <button class="page-btn" [disabled]="currentPage === totalPages - 1" (click)="onPageChange(currentPage + 1)">
               Próximo <i class="fas fa-chevron-right"></i>
             </button>
@@ -116,39 +116,39 @@
           <i class="fas fa-times"></i>
         </button>
       </div>
-      
+
       <div class="modal-body" *ngIf="editingPessoa">
         <form class="edit-form">
           <div class="form-group">
             <label>Nome</label>
-            <input 
-              type="text" 
+            <input
+              type="text"
               class="form-input"
-              [(ngModel)]="editingPessoa.nome" 
+              [(ngModel)]="editingPessoa.nome"
               name="nome"
               placeholder="Digite o nome completo"
               required
             >
           </div>
-          
+
           <div class="form-group">
-            <label>Documento (CPF)</label>
-            <input 
-              type="text" 
+            <label>Documento</label>
+            <input
+              type="text"
               class="form-input"
-              [(ngModel)]="editingPessoa.documento" 
+              [(ngModel)]="editingPessoa.documento"
               name="documento"
               placeholder="000.000.000-00"
               required
             >
           </div>
-          
+
           <div class="form-group">
             <label>Telefone</label>
-            <input 
-              type="text" 
+            <input
+              type="text"
               class="form-input"
-              [(ngModel)]="editingPessoa.telefone" 
+              [(ngModel)]="editingPessoa.telefone"
               name="telefone"
               placeholder="(00) 00000-0000"
               required
@@ -156,7 +156,7 @@
           </div>
         </form>
       </div>
-      
+
       <div class="modal-footer">
         <button class="btn-secondary" (click)="cancelarEdicao()">Cancelar</button>
         <button class="btn-primary" (click)="salvarPessoa()">

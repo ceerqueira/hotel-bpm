@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -22,16 +21,16 @@ public class CheckIn {
     private Long id;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pessoa_id", nullable = false)
+    @JoinColumn(name = "pessoa_id" , referencedColumnName = "id")
     private Pessoa pessoa;
     
-    @Column(name = "data_entrada", nullable = false)
+    @Column(name = "data_entrada")
     private LocalDateTime dataEntrada;
     
-    @Column(name = "data_saida_prevista", nullable = false)
+    @Column(name = "data_saida_prevista")
     private LocalDateTime dataSaidaPrevista;
     
-    @Column(name = "adicional_veiculo", nullable = false)
+    @Column(name = "adicional_veiculo")
     private Boolean adicionalVeiculo = false;
     
     @Column(name = "valor_total", precision = 10, scale = 2)

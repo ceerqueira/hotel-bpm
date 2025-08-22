@@ -3,14 +3,14 @@
     <div class="form-header">
       <h2>Cadastrar Pessoa</h2>
     </div>
-    
+
     <form [formGroup]="pessoaForm" (ngSubmit)="onSubmit()" class="pessoa-form">
       <div class="form-row">
         <div class="form-field">
           <label for="nome">Nome</label>
-          <input 
-            type="text" 
-            id="nome" 
+          <input
+            type="text"
+            id="nome"
             formControlName="nome"
             class="form-input"
             placeholder="Digite o nome completo"
@@ -21,28 +21,28 @@
           </div>
         </div>
       </div>
-      
+
       <div class="form-row">
         <div class="form-field">
-          <label for="documento">CPF</label>
-          <input 
-            type="text" 
-            id="documento" 
+          <label for="documento">Documento</label>
+          <input
+            type="text"
+            id="documento"
             formControlName="documento"
             class="form-input"
-            placeholder="Digite o CPF"
+            placeholder="Digite o Documento"
             [class.error]="pessoaForm.get('documento')?.invalid && pessoaForm.get('documento')?.touched"
           >
           <div *ngIf="pessoaForm.get('documento')?.invalid && pessoaForm.get('documento')?.touched" class="error-text">
             CPF é obrigatório e deve ter pelo menos 11 dígitos
           </div>
         </div>
-        
+
         <div class="form-field">
           <label for="telefone">Telefone</label>
-          <input 
-            type="text" 
-            id="telefone" 
+          <input
+            type="text"
+            id="telefone"
             formControlName="telefone"
             class="form-input"
             placeholder="Digite o telefone"
@@ -53,11 +53,11 @@
           </div>
         </div>
       </div>
-      
+
       <div class="form-row">
         <div class="form-field">
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             class="btn-salvar"
             [disabled]="pessoaForm.invalid || loading"
           >
@@ -66,11 +66,11 @@
         </div>
       </div>
     </form>
-    
+
     <div *ngIf="successMessage" class="success-message">
       {{ successMessage }}
     </div>
-    
+
     <div *ngIf="errorMessage" class="error-message">
       {{ errorMessage }}
     </div>

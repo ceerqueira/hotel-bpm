@@ -12,7 +12,7 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("API de Check-in - Senior Sistemas")
+                        .title("API de Check-in - Teste Técnico - Senior Sistemas")
                         .version("1.0.0")
                         .description("API para gerenciar check-ins e consultas de hóspedes em hotéis"));
     }

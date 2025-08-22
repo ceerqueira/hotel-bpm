@@ -28,9 +28,17 @@ public class CheckInService {
         Pessoa pessoa = pessoaRepository.findById(pessoaId)
                 .orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada com ID: " + pessoaId));
 
-        checkInRepository.findCheckInAtivoPorPessoa(pessoa, LocalDateTime.now())
-                .ifPresent(checkInAtivo -> {
-                    throw new BusinessException("Pessoa já possui um check-in ativo. ID do check-in: " + checkInAtivo.getId());
+        if (dataSaidaPrevista.isBefore(dataEntrada)) {
+            throw new BusinessException("A data de saída prevista não pode ser anterior à data de entrada");
+        }
+
+        checkInRepository.findCheckInsComConflitoDeHorario(pessoa, dataEntrada, dataSaidaPrevista)
+                .stream()
+                .findFirst()
+                .ifPresent(checkInConflitante -> {
+                    throw new BusinessException("Conflito de horário detectado. A pessoa já possui um check-in no período de " + 
+                        checkInConflitante.getDataEntrada() + " até " + checkInConflitante.getDataSaidaPrevista() + 
+                        ". ID do check-in conflitante: " + checkInConflitante.getId());
                 });
 
         CheckIn checkIn = CheckIn.builder()
@@ -79,6 +87,23 @@ public class CheckInService {
         CheckIn checkIn = checkInRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Check-in não encontrado com ID: " + id));
 
+        if (checkInAtualizado.getDataSaidaPrevista().isBefore(checkInAtualizado.getDataEntrada())) {
+            throw new BusinessException("A data de saída prevista não pode ser anterior à data de entrada");
+        }
+
+        checkInRepository.findCheckInsComConflitoDeHorarioExcluindoCheckIn(
+            checkIn.getPessoa(), 
+            checkInAtualizado.getDataEntrada(), 
+            checkInAtualizado.getDataSaidaPrevista(),
+            checkIn.getId()
+        )
+        .stream()
+        .findFirst()
+        .ifPresent(checkInConflitante -> {
+            throw new BusinessException("Conflito de horário detectado. A pessoa já possui um check-in no período de " + 
+                checkInConflitante.getDataEntrada() + " até " + checkInConflitante.getDataSaidaPrevista() + 
+                ". ID do check-in conflitante: " + checkInConflitante.getId());
+        });
 
         checkIn.setDataEntrada(checkInAtualizado.getDataEntrada());
         checkIn.setDataSaidaPrevista(checkInAtualizado.getDataSaidaPrevista());

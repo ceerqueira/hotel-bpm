@@ -53,8 +53,8 @@ export class CheckInComponent implements OnInit {
       this.successMessage = '';
 
       const formValue = this.checkInForm.value;
-      const pessoaSelecionada = this.pessoas.find(p => p.id === formValue.pessoaId);
-      
+      const pessoaSelecionada = this.pessoas.find(p => p.id == formValue.pessoaId);
+
       if (!pessoaSelecionada) {
         this.errorMessage = 'Pessoa não encontrada';
         this.loading = false;

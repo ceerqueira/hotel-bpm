@@ -2,7 +2,6 @@ package br.com.Senior.Teste.BPM.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,12 +16,12 @@ public class Pessoa {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "nome", nullable = false, length = 255)
+    @Column(name = "nome")
     private String nome;
     
-    @Column(name = "documento", nullable = false, length = 20, unique = true)
+    @Column(name = "documento")
     private String documento;
     
-    @Column(name = "telefone", length = 20)
+    @Column(name = "telefone")
     private String telefone;
 }
