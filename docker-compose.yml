@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-bpm
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: hotel_bpm
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - bpm-network
+
+  backend:
+    build:
+      context: ./Teste-BPM API
+      dockerfile: Dockerfile
+    container_name: backend-bpm
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/hotel_bpm?useSSL=false&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    networks:
+      - bpm-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./Teste-BPM-ng
+      dockerfile: Dockerfile
+    container_name: frontend-bpm
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - bpm-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+
+networks:
+  bpm-network:
+    driver: bridge
